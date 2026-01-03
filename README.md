@@ -42,4 +42,4 @@ Simply open `superclaude-builder.html` in your browser. No installation or depen
 
 ## License
 
-MIT
+MIT License
