@@ -1,0 +1,3554 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SuperClaude Command Builder</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      :root {
+        /* Award-winning Gray Scale System */
+        --gray-50: #fafafa;
+        --gray-100: #f5f5f5;
+        --gray-200: #e5e5e5;
+        --gray-300: #d4d4d4;
+        --gray-400: #a3a3a3;
+        --gray-500: #737373;
+        --gray-600: #525252;
+        --gray-700: #404040;
+        --gray-800: #262626;
+        --gray-900: #171717;
+        --gray-950: #0a0a0a;
+
+        /* Accent Color System - #D97757 */
+        --accent-primary: #d97757;
+        --accent-light: #e8957a;
+        --accent-dark: #b85c3a;
+        --accent-glow: rgba(217, 119, 87, 0.25);
+        --accent-subtle: rgba(217, 119, 87, 0.12);
+        --accent-bg: rgba(217, 119, 87, 0.08);
+        --accent-border: rgba(217, 119, 87, 0.3);
+
+        /* Complementary Color - #57B5D9 (cyan-blue) */
+        --accent-complementary: #57b5d9;
+
+        /* Semantic Colors */
+        --bg-primary: var(--gray-950);
+        --bg-secondary: var(--gray-900);
+        --bg-tertiary: var(--gray-800);
+        --bg-elevated: rgba(38, 38, 38, 0.7);
+        --bg-glass: rgba(23, 23, 23, 0.6);
+
+        --border-subtle: rgba(255, 255, 255, 0.06);
+        --border-default: rgba(255, 255, 255, 0.1);
+        --border-strong: rgba(255, 255, 255, 0.15);
+        --border-accent: var(--accent-border);
+
+        --text-primary: var(--gray-50);
+        --text-secondary: var(--gray-300);
+        --text-tertiary: var(--gray-400);
+        --text-disabled: var(--gray-500);
+        --text-accent: var(--accent-primary);
+
+        /* Spacing System */
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 12px;
+        --space-4: 16px;
+        --space-5: 20px;
+        --space-6: 24px;
+        --space-8: 32px;
+        --space-10: 40px;
+        --space-12: 48px;
+
+        /* Border Radius */
+        --radius-sm: 6px;
+        --radius-md: 10px;
+        --radius-lg: 14px;
+        --radius-xl: 18px;
+
+        /* Typography */
+        --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-mono: "JetBrains Mono", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font-mono);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.5;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .app-container {
+        max-width: 1920px;
+        margin: 0 auto;
+        padding: var(--space-6);
+      }
+
+      /* Header */
+      .app-header {
+        margin-top: auto;
+        padding-top: var(--space-4);
+        text-align: center;
+      }
+
+      .app-header h1 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        letter-spacing: -0.02em;
+        color: var(--accent-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-3);
+        text-shadow: 0 0 30px var(--accent-glow);
+      }
+
+      /* Language Switcher */
+      .lang-switcher {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-sm);
+        padding: 2px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: var(--space-3);
+      }
+
+      .lang-switcher:hover {
+        border-color: var(--accent-border);
+      }
+
+      .lang-btn {
+        padding: var(--space-1) var(--space-2);
+        font-size: 0.6875rem;
+        font-weight: 500;
+        color: var(--text-tertiary);
+        border-radius: 3px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .lang-btn.active {
+        background: var(--accent-primary);
+        color: white;
+      }
+
+      .lang-switcher:hover .lang-btn:not(.active) {
+        color: var(--text-secondary);
+      }
+
+      .lang-btn.keyboard-shortcut {
+        position: relative;
+      }
+
+      .lang-btn.keyboard-shortcut::after {
+        content: "⌘L";
+        position: absolute;
+        bottom: calc(100% + 6px);
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 2px 6px;
+        background: var(--gray-800);
+        border: 1px solid var(--border-default);
+        border-radius: 3px;
+        font-size: 0.625rem;
+        color: var(--text-primary);
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .lang-switcher:hover .lang-btn.keyboard-shortcut::after {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .app-header .copyright {
+        font-size: 0.6875rem;
+        color: var(--text-tertiary);
+        margin-top: var(--space-1);
+        letter-spacing: 0.02em;
+      }
+
+      .app-header h1 .icon {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #4a2d22 0%, #1a100c 100%);
+        border-radius: var(--radius-sm);
+        font-size: 1rem;
+        color: var(--accent-primary);
+        box-shadow:
+          0 0 12px var(--accent-glow),
+          inset 0 0 0 1px var(--accent-border);
+      }
+
+      .app-header p {
+        color: var(--text-tertiary);
+        font-size: 0.75rem;
+        margin-top: var(--space-1);
+      }
+
+      /* Main Layout */
+      .main-grid {
+        display: grid;
+        grid-template-columns: 320px minmax(0, 1fr) minmax(0, 1fr);
+        gap: var(--space-5);
+        align-items: start;
+      }
+
+      @media (max-width: 1400px) {
+        .main-grid {
+          grid-template-columns: 280px minmax(0, 1fr) minmax(0, 1fr);
+        }
+      }
+
+      @media (max-width: 1200px) {
+        .main-grid {
+          grid-template-columns: 280px minmax(0, 1fr);
+        }
+
+        .main-grid > .content:last-child {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .main-grid > .content:last-child {
+          grid-column: auto;
+        }
+      }
+
+      .sidebar,
+      .content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      /* Card Component */
+      .card {
+        background: var(--bg-glass);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: var(--space-4);
+        transition:
+          border-color 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .card:hover {
+        border-color: var(--border-default);
+      }
+
+      .card-header {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--accent-primary);
+        margin-bottom: var(--space-4);
+      }
+
+      /* Form Elements */
+      .form-field {
+        margin-bottom: var(--space-4);
+      }
+
+      .form-field:last-child,
+      .form-field:has(+ .form-field.hidden):last-of-type,
+      .form-field:has(+ .hidden) {
+        margin-bottom: 0;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 0.8125rem;
+        color: var(--text-secondary);
+        margin-bottom: var(--space-2);
+        font-weight: 400;
+      }
+
+      /* Custom Select */
+      .select-wrapper {
+        position: relative;
+      }
+
+      .select-wrapper::after {
+        content: "";
+        position: absolute;
+        right: var(--space-4);
+        top: 50%;
+        transform: translateY(-50%) rotate(45deg);
+        width: 6px;
+        height: 6px;
+        border-right: 1.5px solid var(--gray-400);
+        border-bottom: 1.5px solid var(--gray-400);
+        pointer-events: none;
+        margin-top: -2px;
+      }
+
+      select {
+        width: 100%;
+        padding: var(--space-3) var(--space-4);
+        padding-right: var(--space-10);
+        font-size: 0.875rem;
+        font-family: var(--font-mono);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        cursor: pointer;
+        appearance: none;
+        transition:
+          border-color 0.3s ease,
+          background-color 0.3s ease;
+      }
+
+      select:hover {
+        border-color: var(--border-default);
+      }
+
+      select:focus {
+        outline: none;
+        border-color: var(--accent-primary);
+        background: var(--bg-tertiary);
+        box-shadow: 0 0 0 3px var(--accent-subtle);
+      }
+
+      select option {
+        background: var(--gray-900);
+        color: var(--text-primary);
+        padding: var(--space-2);
+      }
+
+      /* Custom Input */
+      input[type="text"] {
+        width: 100%;
+        padding: var(--space-3) var(--space-4);
+        font-size: 0.875rem;
+        font-family: var(--font-sans);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        transition:
+          border-color 0.3s ease,
+          background-color 0.3s ease;
+      }
+
+      input[type="text"]::placeholder {
+        color: var(--text-disabled);
+      }
+
+      input[type="text"]:hover {
+        border-color: var(--border-default);
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--accent-primary);
+        background: var(--bg-tertiary);
+        box-shadow: 0 0 0 3px var(--accent-subtle);
+      }
+
+      /* Toggle Group (Radio) */
+      .toggle-group {
+        display: flex;
+        background: var(--bg-secondary);
+        padding: 3px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-subtle);
+        gap: 3px;
+      }
+
+      .toggle-item {
+        flex: 1;
+      }
+
+      .toggle-item input {
+        display: none;
+      }
+
+      .toggle-item label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-2) var(--space-3);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--text-tertiary);
+        border-radius: calc(var(--radius-md) - 3px);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .toggle-item:hover label {
+        color: var(--text-secondary);
+      }
+
+      .toggle-item input:checked + label {
+        background: var(--accent-primary);
+        color: white;
+      }
+
+      /* Checkbox Grid */
+      .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: var(--space-2);
+      }
+
+      .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .checkbox-item:hover {
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .checkbox-item.checked {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .checkbox-item input {
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--gray-500);
+        border-radius: 50%;
+        background: transparent;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .checkbox-item input:hover {
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 4px var(--accent-subtle);
+      }
+
+      .checkbox-item input:checked {
+        background: var(--accent-primary);
+        border-color: transparent;
+        box-shadow: 0 0 0 4px var(--accent-subtle);
+      }
+
+      .checkbox-item span {
+        font-size: 0.8125rem;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+      }
+
+      .checkbox-item.checked span,
+      .checkbox-item:has(input:checked) span {
+        color: var(--text-primary);
+      }
+
+      /* Select Grid */
+      .select-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: var(--space-3);
+      }
+
+      .select-grid .form-field {
+        margin-bottom: 0;
+      }
+
+      .optional-hint {
+        font-size: 0.6875rem;
+        color: var(--text-tertiary);
+        font-weight: 400;
+      }
+
+      /* Disabled State */
+      .form-field.disabled {
+        opacity: 0.35;
+        pointer-events: none;
+      }
+
+      .form-field.disabled .form-label {
+        color: var(--text-disabled);
+      }
+
+      .checkbox-item.disabled {
+        opacity: 0.35;
+        pointer-events: none;
+      }
+
+      /* Tooltip */
+      [data-tooltip] {
+        position: relative;
+      }
+
+      [data-tooltip]::before {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: calc(100% + 8px);
+        left: 50%;
+        transform: translateX(-50%);
+        padding: var(--space-2) var(--space-3);
+        background: var(--gray-800);
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-sm);
+        font-size: 0.75rem;
+        color: var(--text-primary);
+        white-space: normal;
+        max-width: 280px;
+        min-width: 120px;
+        text-align: center;
+        line-height: 1.4;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 100;
+        pointer-events: none;
+      }
+
+      [data-tooltip]:hover::before {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      /* Select option tooltip via title attribute */
+      select option {
+        background: var(--gray-900);
+        color: var(--text-primary);
+        padding: var(--space-2);
+      }
+
+      /* Output Section */
+      .output-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-accent);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow:
+          0 0 0 1px var(--accent-subtle),
+          0 4px 24px rgba(0, 0, 0, 0.4);
+        min-width: 0;
+      }
+
+      .output-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-4) var(--space-5);
+        border-bottom: 1px solid var(--border-accent);
+        background: linear-gradient(90deg, var(--accent-bg) 0%, transparent 100%);
+      }
+
+      .output-title {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--accent-primary);
+      }
+
+      .output-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .keyboard-hint {
+        font-size: 0.6875rem;
+        font-weight: 500;
+        color: var(--text-tertiary);
+        font-family: var(--font-mono);
+        letter-spacing: 0.02em;
+      }
+
+      /* Custom Button */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-4);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        font-family: var(--font-sans);
+        background: transparent;
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-sm);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        background: var(--accent-primary);
+        border-color: var(--accent-primary);
+        color: white;
+        box-shadow: 0 0 12px var(--accent-glow);
+      }
+
+      .btn:active {
+        transform: scale(0.98);
+      }
+
+      .btn svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      /* Command Output */
+      .command-display {
+        padding: var(--space-5);
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(180deg, var(--accent-bg) 0%, transparent 50%);
+        overflow: hidden;
+        max-width: 100%;
+      }
+
+      .command-output {
+        font-family: var(--font-mono);
+        font-size: 0.9375rem;
+        line-height: 1.7;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+        min-width: 0;
+      }
+
+      .command-output .prefix {
+        color: var(--gray-300);
+      }
+
+      .command-output .command {
+        color: white;
+        font-weight: bold;
+        text-shadow: 0 0 20px var(--accent-glow);
+      }
+
+      .command-output .argument {
+        color: var(--gray-200);
+      }
+
+      .command-output .flag {
+        color: var(--gray-400);
+      }
+
+      .command-output .placeholder {
+        color: var(--gray-400);
+        font-style: italic;
+      }
+
+      /* Toast Notification */
+      .toast {
+        position: fixed;
+        top: var(--space-6);
+        right: var(--space-6);
+        padding: var(--space-3) var(--space-5);
+        background: var(--bg-glass);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--border-accent);
+        border-radius: var(--radius-md);
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        box-shadow: 0 4px 20px rgba(217, 119, 87, 0.2);
+      }
+
+      .toast.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast svg {
+        width: 16px;
+        height: 16px;
+        color: var(--accent-primary);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .app-container {
+          padding: var(--space-4);
+        }
+
+        .main-grid {
+          gap: var(--space-4);
+        }
+
+        .card {
+          padding: var(--space-4);
+        }
+
+        .checkbox-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .select-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .output-header {
+          flex-direction: column;
+          gap: var(--space-3);
+          align-items: flex-start;
+        }
+
+        .command-display {
+          padding: var(--space-4);
+        }
+
+        .command-output {
+          font-size: 0.8125rem;
+          word-break: break-all;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .app-container {
+          padding: var(--space-3);
+        }
+
+        .checkbox-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .toggle-group {
+          flex-direction: column;
+        }
+
+        .toggle-item label {
+          padding: var(--space-3);
+        }
+
+        .app-header h1 {
+          font-size: 1.1rem;
+        }
+
+        .card-header {
+          font-size: 0.75rem;
+        }
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* Command History Card */
+      .history-card {
+        border-color: var(--border-default);
+        min-width: 0;
+      }
+
+      .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        min-width: 0;
+      }
+
+      .history-empty {
+        color: var(--text-tertiary);
+        font-size: 0.8125rem;
+        text-align: center;
+        padding: var(--space-3);
+      }
+
+      .history-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-2) var(--space-3);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
+        min-width: 0;
+      }
+
+      .history-item:hover {
+        border-color: var(--accent-border);
+        background: var(--bg-tertiary);
+      }
+
+      .history-command {
+        flex: 1;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
+      }
+
+      .history-copy-btn {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background: transparent;
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-sm);
+        color: var(--text-tertiary);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .history-copy-btn:hover {
+        background: var(--accent-primary);
+        border-color: var(--accent-primary);
+        color: white;
+      }
+
+      .history-copy-btn svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      /* Bottom mountain pattern */
+      .bottom-pattern {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 200px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .mountain-layer-1 {
+        transform-origin: center bottom;
+        animation:
+          mountain-scale-1 20s ease-in-out infinite,
+          mountain-fade 8s ease-in-out infinite;
+      }
+
+      .mountain-layer-2 {
+        transform-origin: center bottom;
+        animation:
+          mountain-scale-2 18s ease-in-out infinite,
+          mountain-fade 10s ease-in-out infinite 1s;
+      }
+
+      .mountain-layer-3 {
+        transform-origin: center bottom;
+        animation:
+          mountain-scale-3 15s ease-in-out infinite,
+          mountain-fade 12s ease-in-out infinite 2s;
+      }
+
+      .mountain-layer-4 {
+        transform-origin: center bottom;
+        animation:
+          mountain-scale-4 12s ease-in-out infinite,
+          mountain-fade 9s ease-in-out infinite 0.5s;
+      }
+
+      .mountain-layer-5 {
+        transform-origin: center bottom;
+        animation:
+          mountain-scale-5 10s ease-in-out infinite,
+          mountain-fade 7s ease-in-out infinite 1.5s;
+      }
+
+      @keyframes mountain-scale-1 {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.25);
+        }
+      }
+
+      @keyframes mountain-scale-2 {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+      }
+
+      @keyframes mountain-scale-3 {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.18);
+        }
+      }
+
+      @keyframes mountain-scale-4 {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.12);
+        }
+      }
+
+      @keyframes mountain-scale-5 {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.08);
+        }
+      }
+
+      @keyframes mountain-fade {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.6;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app-container">
+      <div class="main-grid">
+        <aside class="sidebar">
+          <!-- Command Type -->
+          <div class="card">
+            <div class="card-header" data-i18n="commandType">Command Type</div>
+            <div class="toggle-group">
+              <div class="toggle-item">
+                <input type="radio" name="commandType" id="typeSlash" value="slash" checked />
+                <label for="typeSlash" data-i18n="slashCommand">/ Slash</label>
+              </div>
+              <div class="toggle-item">
+                <input type="radio" name="commandType" id="typeAgent" value="agent" />
+                <label for="typeAgent" data-i18n="agentCommand">@ Agent</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Core Selection -->
+          <div class="card">
+            <div class="card-header" data-i18n="coreSelection">Core Selection</div>
+            <div class="form-field" id="slashCommandGroup">
+              <label class="form-label" data-i18n="command">Command</label>
+              <div class="select-wrapper">
+                <select id="slashCommand"></select>
+              </div>
+            </div>
+            <div class="form-field" id="agentGroup">
+              <label class="form-label" data-i18n="agent"
+                >Agent <span class="optional-hint" data-i18n="optionalHint">(optional)</span></label
+              >
+              <div class="select-wrapper">
+                <select id="agentSelect"></select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arguments -->
+          <div class="card">
+            <div class="card-header" data-i18n="arguments">Arguments</div>
+            <div class="form-field">
+              <label class="form-label" data-i18n="argumentsLabel">Arguments</label>
+              <input type="text" id="argumentInput" placeholder="Enter arguments..." />
+            </div>
+          </div>
+
+          <!-- Header at bottom of sidebar -->
+          <header class="app-header">
+            <h1>
+              <span class="icon">⚡</span>
+              <span data-i18n="appTitle">SuperClaude Builder</span>
+            </h1>
+            <p data-i18n="appSubtitle">Advanced Command Composition Interface</p>
+            <p class="copyright">© 2024 ThreeAA</p>
+            <div class="lang-switcher" id="langSwitcher">
+              <span class="lang-btn active" data-lang="en">EN</span>
+              <span class="lang-btn" data-lang="zh">中文</span>
+            </div>
+          </header>
+        </aside>
+
+        <section class="content">
+          <!-- Thinking Depth -->
+          <div class="card">
+            <div class="card-header" data-i18n="thinkingDepth">Core Analysis Flags</div>
+            <div class="form-field">
+              <div class="select-wrapper">
+                <select id="thinkingFlag"></select>
+              </div>
+            </div>
+          </div>
+
+          <!-- MCP Servers -->
+          <div class="card">
+            <div class="card-header" data-i18n="mcpServers">MCP Server Flags</div>
+            <div class="checkbox-grid" id="mcpFlags"></div>
+          </div>
+
+          <!-- Behavioral Modes -->
+          <div class="card">
+            <div class="card-header" data-i18n="behavioralModes">Behavioral Mode Flags</div>
+            <div class="checkbox-grid" id="behaviorFlags"></div>
+          </div>
+
+          <!-- Execution Control -->
+          <div class="card">
+            <div class="card-header" data-i18n="executionControl">Execution Control Flags</div>
+            <div class="checkbox-grid" id="executionControlFlags"></div>
+          </div>
+
+          <!-- Command-Specific Flags -->
+          <div class="card">
+            <div class="card-header" data-i18n="commandSpecificFlags">Command-Specific Flags</div>
+            <div class="select-grid">
+              <div class="form-field">
+                <label class="form-label">--focus</label>
+                <div class="select-wrapper">
+                  <select id="focusFlag"></select>
+                </div>
+              </div>
+              <div class="form-field">
+                <label class="form-label">--depth</label>
+                <div class="select-wrapper">
+                  <select id="depthFlag"></select>
+                </div>
+              </div>
+              <div class="form-field">
+                <label class="form-label">--format</label>
+                <div class="select-wrapper">
+                  <select id="formatFlag"></select>
+                </div>
+              </div>
+              <div class="form-field">
+                <label class="form-label">--type</label>
+                <div class="select-wrapper">
+                  <select id="typeFlag"></select>
+                </div>
+              </div>
+              <div class="form-field">
+                <label class="form-label">--strategy</label>
+                <div class="select-wrapper">
+                  <select id="strategyFlag"></select>
+                </div>
+              </div>
+              <div class="form-field">
+                <label class="form-label">--level</label>
+                <div class="select-wrapper">
+                  <select id="levelFlag"></select>
+                </div>
+              </div>
+              <div class="form-field">
+                <label class="form-label">--mode</label>
+                <div class="select-wrapper">
+                  <select id="modeFlag"></select>
+                </div>
+              </div>
+              <div class="form-field">
+                <label class="form-label">--unit</label>
+                <div class="select-wrapper">
+                  <select id="unitFlag"></select>
+                </div>
+              </div>
+              <div class="form-field">
+                <label class="form-label">--context</label>
+                <div class="select-wrapper">
+                  <select id="contextFlag"></select>
+                </div>
+              </div>
+            </div>
+            <div class="checkbox-grid" id="booleanFlags" style="margin-top: var(--space-4)"></div>
+          </div>
+        </section>
+
+        <section class="content">
+          <!-- Advanced Control -->
+          <div class="card">
+            <div class="card-header" data-i18n="advancedControl">Advanced Control Flags</div>
+            <div class="select-grid">
+              <div class="form-field">
+                <label class="form-label">--scope</label>
+                <div class="select-wrapper">
+                  <select id="scopeFlag"></select>
+                </div>
+              </div>
+              <div class="form-field">
+                <label class="form-label">--concurrency</label>
+                <div class="select-wrapper">
+                  <select id="concurrencyFlag"></select>
+                </div>
+              </div>
+              <div class="form-field">
+                <label class="form-label">--iterations</label>
+                <div class="select-wrapper">
+                  <select id="iterationsFlag"></select>
+                </div>
+              </div>
+            </div>
+            <div
+              class="checkbox-grid"
+              id="advancedExecutionFlags"
+              style="margin-top: var(--space-4)"
+            ></div>
+          </div>
+
+          <!-- System Flags -->
+          <div class="card">
+            <div class="card-header" data-i18n="systemFlags">System Flags</div>
+            <div class="checkbox-grid" id="systemFlags"></div>
+            <div class="form-field" style="margin-top: var(--space-4)">
+              <label class="form-label">--install-dir</label>
+              <input type="text" id="installDirFlag" placeholder="Target directory path..." />
+            </div>
+          </div>
+
+          <!-- Output -->
+          <div class="output-card">
+            <div class="output-header">
+              <span class="output-title" data-i18n="generatedCommand">Generated Command</span>
+              <div class="output-actions">
+                <span class="keyboard-hint">⌘C / 🖱️Middle</span>
+                <button class="btn" id="copyBtn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span data-i18n="copy">Copy</span>
+                </button>
+              </div>
+            </div>
+            <div class="command-display">
+              <div class="command-output" id="commandOutput">
+                <span class="placeholder" data-i18n="commandPreview"
+                  >Command preview will appear here...</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Command History -->
+          <div class="card history-card">
+            <div class="card-header" data-i18n="commandHistory">Recent Commands</div>
+            <div class="history-list" id="historyList">
+              <div class="history-empty" data-i18n="historyEmpty">No recent commands</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      <span data-i18n="copiedToClipboard">Copied to clipboard</span>
+    </div>
+
+    <script>
+      // ============================================
+      // SuperClaude Builder Application
+      // Wrapped in IIFE for scope isolation
+      // ============================================
+      (function () {
+        "use strict";
+
+        // ============================================
+        // Internationalization (i18n)
+        // ============================================
+        const translations = {
+          zh: {
+            // UI Elements
+            appTitle: "SuperClaude Builder",
+            appSubtitle: "高级命令组合界面",
+            commandType: "命令类型",
+            slashCommand: "/ 斜杠命令",
+            agentCommand: "@ 代理",
+            coreSelection: "核心选择",
+            command: "命令",
+            agent: "代理",
+            arguments: "参数",
+            argumentsLabel: "参数",
+            thinkingDepth: "核心分析标志",
+            mcpServers: "MCP 服务器标志",
+            behavioralModes: "行为模式标志",
+            executionControl: "执行控制标志",
+            commandSpecificFlags: "命令专用标志",
+            advancedControl: "高级控制标志",
+            systemFlags: "系统标志",
+            generatedCommand: "生成的命令",
+            commandHistory: "最近命令",
+            historyEmpty: "暂无历史命令",
+            copy: "复制",
+            commandPreview: "命令预览将显示在这里...",
+            copiedToClipboard: "已复制到剪贴板",
+            none: "无",
+            optionalHint: "(可选)",
+            noneAgent: "不使用 Agent",
+
+            // Category Names
+            catEssential: "核心命令",
+            catDevelopment: "开发命令",
+            catAnalysis: "分析命令",
+            catQuality: "质量命令",
+            catManagement: "项目管理命令",
+            catUtility: "工具命令",
+            catSession: "会话命令",
+
+            // Command Descriptions (based on official docs)
+            brainstorm: "项目发现与需求探索 - 交互式需求发现和项目规划",
+            help: "显示所有可用命令 - 列出所有可用的 /sc 命令及其描述",
+            research: "深度网络研究 - 自适应规划和智能搜索的综合网络研究",
+            implement: "功能开发实现 - 智能专家路由的全栈功能开发",
+            analyze: "代码评估分析 - 跨质量、安全和性能的综合代码分析",
+            businessPanel: "商业策略分析 - 9位知名思想领袖的多专家商业策略分析",
+            specPanel: "规格审查 - 多专家规格审查和改进，使用知名软件工程专家",
+            troubleshoot: "问题诊断 - 基于根因分析的系统化问题诊断",
+            test: "质量保证测试 - 带有覆盖率分析的综合测试",
+            improve: "代码增强优化 - 应用系统化代码改进和优化",
+            document: "文档生成 - 为代码和API生成综合文档",
+            workflow: "实现计划生成 - 从需求生成结构化实现计划",
+            build: "项目编译构建 - 项目编译和构建",
+            design: "系统架构设计 - 系统架构和设计",
+            explain: "代码解释说明 - 具有教育清晰度的代码解释",
+            cleanup: "技术债务清理 - 技术债务清理和代码组织",
+            estimate: "项目估算 - 时间线和复杂度的项目估算",
+            task: "任务管理 - 复杂工作流程的任务管理",
+            spawn: "元编排 - 大型项目的元编排",
+            git: "版本控制操作 - 版本控制操作",
+            index: "命令发现 - 命令发现和探索",
+            load: "上下文加载 - 会话初始化的上下文加载",
+            save: "会话保存 - 会话持久化和检查点",
+            reflect: "任务验证 - 任务验证和进度评估",
+            selectTool: "工具优化 - 工具优化和选择",
+
+            // Agent Descriptions (based on official docs)
+            agentBackendArchitect: "后端架构师 - 服务器端系统设计，API可靠性和数据完整性",
+            agentDeepResearchAgent: "深度研究代理 - 综合研究，自适应规划和多跳推理",
+            agentDevopsArchitect: "DevOps架构师 - 基础设施自动化和部署管道设计",
+            agentFrontendArchitect: "前端架构师 - 现代Web应用架构，侧重可访问性和用户体验",
+            agentLearningGuide: "学习指南 - 教育内容设计和渐进式学习与指导",
+            agentPerformanceEngineer: "性能工程师 - 系统性能优化，侧重可扩展性和资源效率",
+            agentPmAgent: "PM代理 - 自我改进工作流程执行器，记录实现并维护知识库",
+            agentPythonExpert: "Python专家 - 生产级Python开发，现代框架和性能优化",
+            agentQualityEngineer: "质量工程师 - 综合测试策略和质量保证，注重自动化和覆盖率",
+            agentRefactoringExpert: "重构专家 - 通过系统化重构和技术债务管理改进代码质量",
+            agentRequirementsAnalyst: "需求分析师 - 需求发现和规范开发，系统化干系人分析",
+            agentRootCauseAnalyst: "根因分析师 - 基于证据分析的系统化问题调查，假设测试",
+            agentSecurityEngineer: "安全工程师 - 应用安全架构，威胁建模和漏洞预防",
+            agentSystemArchitect: "系统架构师 - 大规模分布式系统设计，侧重可扩展性和服务架构",
+            agentTechnicalWriter: "技术文档专家 - 技术文档和交流，受众分析和清晰度",
+
+            // Flag Tooltips
+            tooltipNone: "不使用核心分析标志",
+            tooltipThink: "标准结构化分析（约 4K tokens）- 触发条件：5+ 文件、复杂分析",
+            tooltipThinkHard:
+              "深度分析（约 10K tokens），自动启用 seq+c7 - 触发条件：架构分析、系统依赖",
+            tooltipUltrathink:
+              "最大深度分析（约 32K tokens），启用所有工具 - 触发条件：关键系统重设计、遗留系统现代化",
+
+            // MCP Server Tooltips
+            tooltipC7: "官方文档、框架模式 - 触发条件：库导入、框架问题",
+            tooltipSeq: "多步推理、调试 - 触发条件：复杂调试、系统设计",
+            tooltipMagic: "UI 组件生成 - 触发条件：/ui 命令、前端关键词",
+            tooltipPlay: "浏览器测试、E2E 验证 - 触发条件：测试请求、视觉验证",
+            tooltipChrome: "性能分析、调试 - 触发条件：性能审计、调试、布局问题",
+            tooltipTavily: "网络搜索、实时信息 - 触发条件：网络搜索请求、研究查询",
+            tooltipMorph: "批量转换、模式编辑 - 触发条件：批量操作、风格强制",
+            tooltipSerena: "项目记忆、符号操作 - 触发条件：符号操作、大型代码库",
+
+            // Behavior Tooltips
+            tooltipBrainstorm: "协作发现心态 - 触发条件：模糊请求、探索关键词",
+            tooltipIntrospect: "暴露推理过程 - 触发条件：自我分析、错误恢复",
+            tooltipTaskManage: "通过委派进行编排 - 触发条件：>3 步骤、复杂范围",
+            tooltipOrchestrate: "优化工具选择和并行执行 - 触发条件：多工具操作、性能需求",
+            tooltipTokenEfficient: "符号增强通信，减少 30-50% token 使用 - 触发条件：上下文 >75%",
+
+            // Execution Control Tooltips
+            tooltipLoop: '迭代增强循环 - 触发条件："improve"、"polish"、"refine" 关键词',
+            tooltipSafeMode: "最大验证和保守执行 - 触发条件：生产环境、资源使用 >85%",
+            tooltipValidate: "执行前风险评估 - 触发条件：风险 >0.7、生产环境",
+            tooltipDelegate: "子代理并行处理 - 触发条件：>7 目录 或 >50 文件",
+
+            // Advanced Execution Tooltips
+            tooltipAllMcp: "启用所有 MCP 服务器（与单个 MCP 标志冲突）",
+            tooltipNoMcp: "仅使用原生工具，禁用所有 MCP 服务器（优先级高于单个 MCP 标志）",
+            tooltipFrontendVerify:
+              "UI 测试、前端调试、布局验证 - 启用 Playwright + Chrome DevTools + Serena",
+
+            // System Tooltips
+            tooltipVerbose: "详细日志输出，显示决策逻辑和标志激活",
+            tooltipQuiet: "抑制输出，静默模式",
+            tooltipDryRun: "模拟操作，不实际执行",
+            tooltipForce: "跳过检查，强制执行",
+            tooltipYes: "自动确认所有提示",
+            tooltipLegacy: "使用旧版脚本",
+            tooltipVersion: "显示版本信息",
+            tooltipHelp: "显示帮助信息",
+
+            // Boolean Tooltips
+            tooltipPreview: "预览模式，显示但不执行更改",
+            tooltipFix: "应用修复",
+            tooltipCoverage: "包含测试覆盖率报告",
+            tooltipWatch: "监视模式，持续监控变化",
+            tooltipTrace: "包含跟踪分析",
+            tooltipClean: "构建前清理",
+            tooltipOptimize: "启用优化",
+            tooltipBreakdown: "详细分解",
+            tooltipInteractive: "交互式用户引导",
+            tooltipParallel: "并行执行",
+            tooltipSafe: "保守方法，安全清理",
+            tooltipAggressive: "激进方法，深度清理",
+            tooltipSmartCommit: "智能生成提交信息",
+            tooltipAnalyze: "包含分析",
+            tooltipExplain: "解释选择过程",
+
+            // Depth Tooltips
+            tooltipQuick: "快速分析，适用于简单任务",
+            tooltipStandard: "标准分析深度",
+            tooltipDeep: "深度分析，详细检查",
+            tooltipExhaustive: "详尽分析，最全面",
+            tooltipShallow: "浅层分析，快速概览",
+            tooltipNormal: "正常分析深度",
+
+            // Type Tooltips
+            tooltipTypeFrontend: "前端开发类型",
+            tooltipTypeBackend: "后端开发类型",
+            tooltipTypeFullstack: "全栈开发类型",
+            tooltipTypeUnit: "单元测试类型",
+            tooltipTypeIntegration: "集成测试类型",
+            tooltipTypeE2e: "端到端测试类型",
+            tooltipTypeApi: "API 设计/文档类型",
+            tooltipTypeUserGuide: "用户指南文档类型",
+            tooltipTypeTechnical: "技术文档类型",
+            tooltipTypeDocs: "文档索引类型",
+            tooltipTypeReadme: "README 文档类型",
+            tooltipTypeStructure: "项目结构索引类型",
+            tooltipTypeBug: "Bug 问题排查类型",
+            tooltipTypeBuild: "构建问题排查类型",
+            tooltipTypePerformance: "性能问题排查类型",
+            tooltipTypeDeployment: "部署问题排查类型",
+            tooltipTypeArchitecture: "架构设计类型",
+            tooltipTypeComponent: "组件设计类型",
+            tooltipTypeDatabase: "数据库设计类型",
+            tooltipTypeCode: "代码清理类型",
+            tooltipTypeImports: "导入语句清理类型",
+            tooltipTypeFiles: "文件清理类型",
+            tooltipTypeAll: "全部清理类型",
+            tooltipTypeTime: "时间估算类型",
+            tooltipTypeEffort: "工作量估算类型",
+            tooltipTypeComplexity: "复杂度估算类型",
+            tooltipTypeQuality: "代码质量改进类型",
+            tooltipTypeMaintainability: "可维护性改进类型",
+            tooltipTypeStyle: "代码风格改进类型",
+            tooltipTypeSecurity: "安全性改进类型",
+            tooltipTypeDev: "开发环境构建配置",
+            tooltipTypeProd: "生产环境构建配置",
+            tooltipTypeTest: "测试环境构建配置",
+            tooltipTypeTask: "任务反思范围",
+            tooltipTypeSession: "会话反思范围",
+            tooltipTypeCompletion: "完成度反思范围",
+
+            // Focus Tooltips
+            tooltipFocusPerformance: "关注性能优化分析",
+            tooltipFocusQuality: "关注代码质量分析",
+            tooltipFocusArchitecture: "关注架构设计分析",
+            tooltipFocusAccessibility: "关注无障碍访问分析",
+            tooltipFocusTesting: "关注测试覆盖分析",
+            tooltipFocusSecurity: "关注安全性分析",
+
+            // Strategy Tooltips
+            tooltipStrategySystematic: "系统化方法，有条理地逐步执行",
+            tooltipStrategyCreative: "创意方法，探索创新解决方案",
+            tooltipStrategyPlanning: "规划方法，注重计划和设计",
+            tooltipStrategyIntent: "意图驱动方法，关注目标和意图",
+            tooltipStrategyUnified: "统一方法，整合多种策略",
+            tooltipStrategyAgile: "敏捷方法，快速迭代和响应变化",
+            tooltipStrategyWaterfall: "瀑布方法，线性顺序执行",
+            tooltipStrategyEnterprise: "企业级方法，适用于大型复杂项目",
+            tooltipStrategySequential: "顺序执行策略，按序处理子任务",
+            tooltipStrategyParallel: "并行执行策略，同时处理多个子任务",
+            tooltipStrategyAdaptive: "自适应策略，根据情况动态调整",
+
+            // Mode Tooltips
+            tooltipModeDiscussion: "讨论模式，开放式探讨",
+            tooltipModeDebate: "辩论模式，多角度论证",
+            tooltipModeSocratic: "苏格拉底模式，通过提问引导思考",
+            tooltipModeCritique: "批评模式，深入分析和评估",
+
+            // Format Tooltips
+            tooltipFormatMarkdown: "Markdown 格式输出",
+            tooltipFormatMd: "Markdown 格式输出（简写）",
+            tooltipFormatHtml: "HTML 格式输出",
+            tooltipFormatText: "纯文本格式输出",
+            tooltipFormatJson: "JSON 格式输出",
+            tooltipFormatYaml: "YAML 格式输出",
+            tooltipFormatReport: "报告格式输出",
+            tooltipFormatDiagram: "图表格式输出",
+            tooltipFormatSpec: "规格说明格式输出",
+            tooltipFormatCode: "代码格式输出",
+            tooltipFormatExamples: "示例格式输出",
+            tooltipFormatInteractive: "交互式格式输出",
+
+            // Scope Tooltips
+            tooltipScopeFile: "文件级别范围",
+            tooltipScopeModule: "模块级别范围",
+            tooltipScopeProject: "项目级别范围",
+            tooltipScopeSystem: "系统级别范围",
+
+            // Level Tooltips
+            tooltipLevelBasic: "基础级别，适合初学者",
+            tooltipLevelIntermediate: "中级级别，适合有经验者",
+            tooltipLevelAdvanced: "高级级别，适合专家",
+
+            // Unit Tooltips
+            tooltipUnitHours: "以小时为单位估算",
+            tooltipUnitDays: "以天为单位估算",
+            tooltipUnitWeeks: "以周为单位估算",
+
+            // Context Tooltips
+            tooltipContextReact: "React 框架上下文",
+            tooltipContextSecurity: "安全领域上下文",
+            tooltipContextPerformance: "性能优化上下文",
+
+            // Concurrency Tooltips (dynamic)
+            tooltipConcurrency: "设置 N 个并行操作",
+
+            // Iterations Tooltips (dynamic)
+            tooltipIterations: "执行 N 次改进迭代",
+
+            // Placeholders
+            placeholderArguments: "输入任务描述或参数...",
+            placeholderInstallDir: "目标目录路径...",
+
+            // Argument Placeholders by Command
+            phBrainstorm: '输入项目想法，如 "电商平台"',
+            phResearch: '输入研究查询，如 "React 19 新特性"',
+            phImplement: '输入功能描述，如 "JWT登录系统"',
+            phAnalyze: '输入文件路径，如 "src/" 或 "."',
+            phTroubleshoot: '输入问题描述，如 "登录时500错误"',
+            phDocument: '输入文件路径，如 "src/components"',
+            phImprove: '输入文件路径，如 "src/utils.js"',
+            phDesign: '输入系统描述，如 "微服务架构"',
+            phWorkflow: '输入功能描述，如 "用户注册流程"',
+            phBusinessPanel: "输入商业内容或 @文件路径",
+            phSpecPanel: "输入规格内容或 @文件路径",
+            phTest: '输入测试目标，如 "src/api"',
+            phBuild: "输入构建目标或配置",
+            phGit: "输入Git操作描述",
+            phCleanup: "输入清理目标路径",
+            phExplain: "输入需要解释的代码路径",
+            phEstimate: "输入需要估算的功能描述",
+            phTask: "输入任务描述",
+            phSpawn: "输入子任务描述",
+            phLoad: "输入要加载的上下文",
+            phSave: "输入保存的会话名称",
+            phReflect: "输入反思内容",
+            phSelectTool: "输入工具选择条件",
+            phHelp: "输入帮助主题（可选）",
+            phIndex: "输入索引范围（可选）",
+            phDefault: "输入命令参数",
+          },
+          en: {
+            // UI Elements
+            appTitle: "SuperClaude Builder",
+            appSubtitle: "Advanced Command Composition Interface",
+            commandType: "Command Type",
+            slashCommand: "/ Slash",
+            agentCommand: "@ Agent",
+            coreSelection: "Core Selection",
+            command: "Command",
+            agent: "Agent",
+            arguments: "Arguments",
+            argumentsLabel: "Arguments",
+            thinkingDepth: "Core Analysis Flags",
+            mcpServers: "MCP Server Flags",
+            behavioralModes: "Behavioral Mode Flags",
+            executionControl: "Execution Control Flags",
+            commandSpecificFlags: "Command-Specific Flags",
+            advancedControl: "Advanced Control Flags",
+            systemFlags: "System Flags",
+            generatedCommand: "Generated Command",
+            commandHistory: "Recent Commands",
+            historyEmpty: "No recent commands",
+            copy: "Copy",
+            commandPreview: "Command preview will appear here...",
+            copiedToClipboard: "Copied to clipboard",
+            none: "None",
+            optionalHint: "(optional)",
+            noneAgent: "No Agent",
+
+            // Category Names
+            catEssential: "Essential Commands",
+            catDevelopment: "Development Commands",
+            catAnalysis: "Analysis Commands",
+            catQuality: "Quality Commands",
+            catManagement: "Project Management Commands",
+            catUtility: "Utility Commands",
+            catSession: "Session Commands",
+
+            // Command Descriptions (based on official docs)
+            brainstorm:
+              "Project discovery and requirements exploration - Interactive requirements discovery and project planning",
+            help: "Display all available commands - Lists all available /sc commands and their descriptions",
+            research:
+              "Comprehensive web research - Comprehensive web research with adaptive planning and intelligent search",
+            implement:
+              "Feature development - Full-stack feature development with intelligent specialist routing",
+            analyze:
+              "Code assessment - Comprehensive code analysis across quality, security, and performance",
+            businessPanel:
+              "Strategic business analysis - Multi-expert business strategy analysis with 9 renowned thought leaders",
+            specPanel:
+              "Expert specification review - Multi-expert specification review and improvement using renowned experts",
+            troubleshoot: "Problem diagnosis - Systematic issue diagnosis with root cause analysis",
+            test: "Quality assurance - Comprehensive testing with coverage analysis",
+            improve: "Code enhancement - Apply systematic code improvements and optimizations",
+            document:
+              "Documentation generation - Generate comprehensive documentation for code and APIs",
+            workflow:
+              "Implementation planning - Generate structured implementation plans from requirements",
+            build: "Project compilation - Project compilation and build",
+            design: "System architecture - System architecture and design",
+            explain: "Code explanation - Code explanation with educational clarity",
+            cleanup: "Technical debt cleanup - Technical debt cleanup and code organization",
+            estimate: "Project estimation - Project estimation for timelines and complexity",
+            task: "Task management - Task management for complex workflows",
+            spawn: "Meta-orchestration - Meta-orchestration for large-scale projects",
+            git: "Version control - Version control operations",
+            index: "Command discovery - Command discovery and exploration",
+            load: "Context loading - Context loading for session initialization",
+            save: "Session persistence - Session persistence and checkpointing",
+            reflect: "Task validation - Task validation and progress assessment",
+            selectTool: "Tool optimization - Tool optimization and selection",
+
+            // Agent Descriptions (based on official docs)
+            agentBackendArchitect:
+              "Backend Architect - Server-side system design with focus on API reliability and data integrity",
+            agentDeepResearchAgent:
+              "Deep Research Agent - Comprehensive research with adaptive planning and multi-hop reasoning",
+            agentDevopsArchitect:
+              "DevOps Architect - Infrastructure automation and deployment pipeline design",
+            agentFrontendArchitect:
+              "Frontend Architect - Modern web application architecture with focus on accessibility and UX",
+            agentLearningGuide:
+              "Learning Guide - Educational content design and progressive learning with mentorship",
+            agentPerformanceEngineer:
+              "Performance Engineer - System performance optimization with focus on scalability and resource efficiency",
+            agentPmAgent:
+              "PM Agent - Self-improvement workflow executor that documents implementations and maintains knowledge base",
+            agentPythonExpert:
+              "Python Expert - Production-ready Python development with modern frameworks and performance",
+            agentQualityEngineer:
+              "Quality Engineer - Comprehensive testing strategy and quality assurance with focus on automation",
+            agentRefactoringExpert:
+              "Refactoring Expert - Code quality improvement through systematic refactoring and technical debt management",
+            agentRequirementsAnalyst:
+              "Requirements Analyst - Requirements discovery and specification development through systematic stakeholder analysis",
+            agentRootCauseAnalyst:
+              "Root Cause Analyst - Systematic problem investigation using evidence-based analysis and hypothesis testing",
+            agentSecurityEngineer:
+              "Security Engineer - Application security architecture with threat modeling and vulnerability prevention",
+            agentSystemArchitect:
+              "System Architect - Large-scale distributed system design with focus on scalability and service architecture",
+            agentTechnicalWriter:
+              "Technical Writer - Technical documentation and communication with focus on audience analysis and clarity",
+
+            // Flag Tooltips
+            tooltipNone: "No core analysis flag",
+            tooltipThink:
+              "Standard structured analysis (~4K tokens) - When: 5+ files, complex analysis",
+            tooltipThinkHard:
+              "Deep analysis (~10K tokens), auto-enables seq+c7 - When: architecture, system dependencies",
+            tooltipUltrathink:
+              "Maximum depth analysis (~32K tokens), all tools enabled - When: critical redesign, legacy modernization",
+
+            // MCP Server Tooltips
+            tooltipC7:
+              "Official docs, framework patterns - When: library imports, framework questions",
+            tooltipSeq: "Multi-step reasoning, debugging - When: complex debugging, system design",
+            tooltipMagic: "UI component generation - When: /ui commands, frontend keywords",
+            tooltipPlay:
+              "Browser testing, E2E validation - When: testing requests, visual validation",
+            tooltipChrome:
+              "Performance analysis, debugging - When: performance auditing, debugging, layout issues",
+            tooltipTavily:
+              "Web search, real-time info - When: web search requests, research queries",
+            tooltipMorph:
+              "Bulk transformations, pattern edits - When: bulk operations, style enforcement",
+            tooltipSerena:
+              "Project memory, symbol operations - When: symbol operations, large codebases",
+
+            // Behavior Tooltips
+            tooltipBrainstorm:
+              "Collaborative discovery mindset - When: vague requests, exploration keywords",
+            tooltipIntrospect: "Expose reasoning process - When: self-analysis, error recovery",
+            tooltipTaskManage: "Orchestrate through delegation - When: >3 steps, complex scope",
+            tooltipOrchestrate:
+              "Optimize tool selection and parallel execution - When: multi-tool operations, performance needs",
+            tooltipTokenEfficient:
+              "Symbol-enhanced communication, 30-50% reduction - When: context >75%",
+
+            // Execution Control Tooltips
+            tooltipLoop:
+              'Iterative enhancement cycles - When: "improve", "polish", "refine" keywords',
+            tooltipSafeMode:
+              "Maximum validation and conservative execution - When: production, resource usage >85%",
+            tooltipValidate:
+              "Pre-execution risk assessment - When: risk >0.7, production environment",
+            tooltipDelegate: "Sub-agent parallel processing - When: >7 directories OR >50 files",
+
+            // Advanced Execution Tooltips
+            tooltipAllMcp: "Enable all MCP servers (conflicts with individual MCP flags)",
+            tooltipNoMcp:
+              "Use native tools only, disable all MCP servers (overrides individual MCP flags)",
+            tooltipFrontendVerify:
+              "UI testing, frontend debugging, layout validation - Enables Playwright + Chrome DevTools + Serena",
+
+            // System Tooltips
+            tooltipVerbose: "Verbose logging, shows decision logic and flag activation",
+            tooltipQuiet: "Suppress output, silent mode",
+            tooltipDryRun: "Simulate operations, do not execute",
+            tooltipForce: "Skip checks, force execution",
+            tooltipYes: "Auto-confirm all prompts",
+            tooltipLegacy: "Use legacy scripts",
+            tooltipVersion: "Show version information",
+            tooltipHelp: "Show help information",
+
+            // Boolean Tooltips
+            tooltipPreview: "Preview mode, show but do not execute changes",
+            tooltipFix: "Apply fixes",
+            tooltipCoverage: "Include test coverage report",
+            tooltipWatch: "Watch mode, continuously monitor changes",
+            tooltipTrace: "Include trace analysis",
+            tooltipClean: "Clean before build",
+            tooltipOptimize: "Enable optimization",
+            tooltipBreakdown: "Detailed breakdown",
+            tooltipInteractive: "Interactive user guidance",
+            tooltipParallel: "Parallel execution",
+            tooltipSafe: "Conservative approach, safe cleanup",
+            tooltipAggressive: "Aggressive approach, deep cleanup",
+            tooltipSmartCommit: "Smart commit message generation",
+            tooltipAnalyze: "Include analysis",
+            tooltipExplain: "Explain selection process",
+
+            // Depth Tooltips
+            tooltipQuick: "Quick analysis for simple tasks",
+            tooltipStandard: "Standard analysis depth",
+            tooltipDeep: "Deep analysis with detailed checks",
+            tooltipExhaustive: "Exhaustive analysis, most comprehensive",
+            tooltipShallow: "Shallow analysis, quick overview",
+            tooltipNormal: "Normal analysis depth",
+
+            // Type Tooltips
+            tooltipTypeFrontend: "Frontend development type",
+            tooltipTypeBackend: "Backend development type",
+            tooltipTypeFullstack: "Full-stack development type",
+            tooltipTypeUnit: "Unit testing type",
+            tooltipTypeIntegration: "Integration testing type",
+            tooltipTypeE2e: "End-to-end testing type",
+            tooltipTypeApi: "API design/documentation type",
+            tooltipTypeUserGuide: "User guide documentation type",
+            tooltipTypeTechnical: "Technical documentation type",
+            tooltipTypeDocs: "Documentation index type",
+            tooltipTypeReadme: "README documentation type",
+            tooltipTypeStructure: "Project structure index type",
+            tooltipTypeBug: "Bug troubleshooting type",
+            tooltipTypeBuild: "Build troubleshooting type",
+            tooltipTypePerformance: "Performance troubleshooting type",
+            tooltipTypeDeployment: "Deployment troubleshooting type",
+            tooltipTypeArchitecture: "Architecture design type",
+            tooltipTypeComponent: "Component design type",
+            tooltipTypeDatabase: "Database design type",
+            tooltipTypeCode: "Code cleanup type",
+            tooltipTypeImports: "Import statement cleanup type",
+            tooltipTypeFiles: "File cleanup type",
+            tooltipTypeAll: "All cleanup types",
+            tooltipTypeTime: "Time estimation type",
+            tooltipTypeEffort: "Effort estimation type",
+            tooltipTypeComplexity: "Complexity estimation type",
+            tooltipTypeQuality: "Code quality improvement type",
+            tooltipTypeMaintainability: "Maintainability improvement type",
+            tooltipTypeStyle: "Code style improvement type",
+            tooltipTypeSecurity: "Security improvement type",
+            tooltipTypeDev: "Development environment build configuration",
+            tooltipTypeProd: "Production environment build configuration",
+            tooltipTypeTest: "Test environment build configuration",
+            tooltipTypeTask: "Task reflection scope",
+            tooltipTypeSession: "Session reflection scope",
+            tooltipTypeCompletion: "Completion reflection scope",
+
+            // Focus Tooltips
+            tooltipFocusPerformance: "Focus on performance optimization analysis",
+            tooltipFocusQuality: "Focus on code quality analysis",
+            tooltipFocusArchitecture: "Focus on architecture design analysis",
+            tooltipFocusAccessibility: "Focus on accessibility analysis",
+            tooltipFocusTesting: "Focus on test coverage analysis",
+            tooltipFocusSecurity: "Focus on security analysis",
+
+            // Strategy Tooltips
+            tooltipStrategySystematic: "Systematic approach, organized step-by-step execution",
+            tooltipStrategyCreative: "Creative approach, exploring innovative solutions",
+            tooltipStrategyPlanning: "Planning approach, emphasis on planning and design",
+            tooltipStrategyIntent: "Intent-driven approach, focus on goals and intent",
+            tooltipStrategyUnified: "Unified approach, integrating multiple strategies",
+            tooltipStrategyAgile: "Agile approach, rapid iteration and response to change",
+            tooltipStrategyWaterfall: "Waterfall approach, linear sequential execution",
+            tooltipStrategyEnterprise: "Enterprise approach, for large complex projects",
+            tooltipStrategySequential: "Sequential execution strategy, process sub-tasks in order",
+            tooltipStrategyParallel:
+              "Parallel execution strategy, process multiple sub-tasks simultaneously",
+            tooltipStrategyAdaptive: "Adaptive strategy, dynamically adjust based on situation",
+
+            // Mode Tooltips
+            tooltipModeDiscussion: "Discussion mode, open-ended exploration",
+            tooltipModeDebate: "Debate mode, multi-perspective argumentation",
+            tooltipModeSocratic: "Socratic mode, guide thinking through questions",
+            tooltipModeCritique: "Critique mode, in-depth analysis and evaluation",
+
+            // Format Tooltips
+            tooltipFormatMarkdown: "Markdown format output",
+            tooltipFormatMd: "Markdown format output (short)",
+            tooltipFormatHtml: "HTML format output",
+            tooltipFormatText: "Plain text format output",
+            tooltipFormatJson: "JSON format output",
+            tooltipFormatYaml: "YAML format output",
+            tooltipFormatReport: "Report format output",
+            tooltipFormatDiagram: "Diagram format output",
+            tooltipFormatSpec: "Specification format output",
+            tooltipFormatCode: "Code format output",
+            tooltipFormatExamples: "Examples format output",
+            tooltipFormatInteractive: "Interactive format output",
+
+            // Scope Tooltips
+            tooltipScopeFile: "File-level scope",
+            tooltipScopeModule: "Module-level scope",
+            tooltipScopeProject: "Project-level scope",
+            tooltipScopeSystem: "System-level scope",
+
+            // Level Tooltips
+            tooltipLevelBasic: "Basic level, suitable for beginners",
+            tooltipLevelIntermediate: "Intermediate level, suitable for experienced users",
+            tooltipLevelAdvanced: "Advanced level, suitable for experts",
+
+            // Unit Tooltips
+            tooltipUnitHours: "Estimate in hours",
+            tooltipUnitDays: "Estimate in days",
+            tooltipUnitWeeks: "Estimate in weeks",
+
+            // Context Tooltips
+            tooltipContextReact: "React framework context",
+            tooltipContextSecurity: "Security domain context",
+            tooltipContextPerformance: "Performance optimization context",
+
+            // Concurrency Tooltips (dynamic)
+            tooltipConcurrency: "Set N parallel operations",
+
+            // Iterations Tooltips (dynamic)
+            tooltipIterations: "Execute N improvement iterations",
+
+            // Placeholders
+            placeholderArguments: "Enter task description or arguments...",
+            placeholderInstallDir: "Target directory path...",
+
+            // Argument Placeholders by Command
+            phBrainstorm: 'Enter project idea, e.g. "e-commerce platform"',
+            phResearch: 'Enter research query, e.g. "React 19 features"',
+            phImplement: 'Enter feature description, e.g. "JWT login system"',
+            phAnalyze: 'Enter file path, e.g. "src/" or "."',
+            phTroubleshoot: 'Enter issue description, e.g. "500 error on login"',
+            phDocument: 'Enter file path, e.g. "src/components"',
+            phImprove: 'Enter file path, e.g. "src/utils.js"',
+            phDesign: 'Enter system description, e.g. "microservices architecture"',
+            phWorkflow: 'Enter feature description, e.g. "user registration flow"',
+            phBusinessPanel: "Enter business content or @file path",
+            phSpecPanel: "Enter specification content or @file path",
+            phTest: 'Enter test target, e.g. "src/api"',
+            phBuild: "Enter build target or configuration",
+            phGit: "Enter Git operation description",
+            phCleanup: "Enter cleanup target path",
+            phExplain: "Enter code path to explain",
+            phEstimate: "Enter feature description to estimate",
+            phTask: "Enter task description",
+            phSpawn: "Enter sub-task description",
+            phLoad: "Enter context to load",
+            phSave: "Enter session name to save",
+            phReflect: "Enter reflection content",
+            phSelectTool: "Enter tool selection criteria",
+            phHelp: "Enter help topic (optional)",
+            phIndex: "Enter index scope (optional)",
+            phDefault: "Enter command arguments",
+          },
+        };
+
+        // Current language state
+        let currentLang = "en";
+
+        // Translation function
+        function t(key) {
+          return translations[currentLang][key] || key;
+        }
+
+        // Helper function for dynamic numeric tooltips
+        function createNumericTooltip(baseKey, value) {
+          const template = t(baseKey);
+          return template.replace("N", value);
+        }
+
+        // Update all translatable elements
+        function updateLanguage(lang) {
+          currentLang = lang;
+          document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+
+          // Update all elements with data-i18n attribute
+          // Process in reverse order (deepest nested first) to preserve child elements
+          const elements = Array.from(document.querySelectorAll("[data-i18n]"));
+          elements.reverse().forEach((el) => {
+            const key = el.getAttribute("data-i18n");
+            const translation = t(key);
+            if (el.tagName === "INPUT" && el.getAttribute("placeholder")) {
+              el.setAttribute("placeholder", translation);
+            } else if (el.querySelector("[data-i18n]")) {
+              // If element contains nested data-i18n elements, use innerHTML approach
+              const childKey = el.querySelector("[data-i18n]")?.getAttribute("data-i18n");
+              if (childKey) {
+                const mainText = translation;
+                const childTranslation = t(childKey);
+                el.innerHTML = `${mainText} <span class="optional-hint" data-i18n="${childKey}">${childTranslation}</span>`;
+              } else {
+                el.textContent = translation;
+              }
+            } else {
+              el.textContent = translation;
+            }
+          });
+
+          // Update language switcher buttons
+          document.querySelectorAll(".lang-btn").forEach((btn) => {
+            btn.classList.toggle("active", btn.getAttribute("data-lang") === lang);
+          });
+
+          // Update command and agent descriptions
+          updateCommandDescriptions();
+          updateAgentDescriptions();
+
+          // Update all flag dropdowns with translated options
+          updateAllFlagSelects();
+
+          // Update all checkbox tooltips
+          updateAllCheckboxTooltips();
+
+          // Update argument placeholder
+          updateArgumentPlaceholder();
+        }
+
+        // Update all checkbox tooltips with current language
+        function updateAllCheckboxTooltips() {
+          const checkboxGroups = [
+            { container: mcpFlagsContainer, options: flagDefinitions.mcpFlags.options },
+            { container: behaviorFlagsContainer, options: flagDefinitions.behaviorFlags.options },
+            {
+              container: executionControlFlagsContainer,
+              options: flagDefinitions.executionControlFlags.options,
+            },
+            {
+              container: advancedExecutionFlagsContainer,
+              options: flagDefinitions.advancedExecutionFlags.options,
+            },
+            { container: systemFlagsContainer, options: flagDefinitions.systemFlags.options },
+            { container: booleanFlagsContainer, options: flagDefinitions.booleanFlags.options },
+          ];
+
+          checkboxGroups.forEach(({ container, options }) => {
+            if (!container) return;
+            const checkboxes = container.querySelectorAll(".checkbox-item");
+            checkboxes.forEach((checkbox, index) => {
+              const option = options[index];
+              if (option && option.tooltipKey) {
+                const tooltipText = t(option.tooltipKey);
+                if (tooltipText) {
+                  checkbox.setAttribute("data-tooltip", tooltipText);
+                } else {
+                  checkbox.removeAttribute("data-tooltip");
+                }
+              }
+            });
+          });
+        }
+
+        // Update all flag select dropdowns with current language
+        function updateAllFlagSelects() {
+          // Update each flag select with current language
+          const flagSelects = [
+            { select: thinkingFlagSelect, options: flagDefinitions.thinking.options },
+            { select: depthFlagSelect, options: flagDefinitions.depth.options },
+            { select: typeFlagSelect, options: flagDefinitions.type.options },
+            { select: focusFlagSelect, options: flagDefinitions.focus.options },
+            { select: strategyFlagSelect, options: flagDefinitions.strategy.options },
+            { select: modeFlagSelect, options: flagDefinitions.mode.options },
+            { select: formatFlagSelect, options: flagDefinitions.format.options },
+            { select: scopeFlagSelect, options: flagDefinitions.scope.options },
+            { select: levelFlagSelect, options: flagDefinitions.level.options },
+            { select: unitFlagSelect, options: flagDefinitions.unit.options },
+            { select: contextFlagSelect, options: flagDefinitions.context.options },
+            { select: concurrencyFlagSelect, options: flagDefinitions.concurrency.options },
+            { select: iterationsFlagSelect, options: flagDefinitions.iterations.options },
+          ];
+
+          flagSelects.forEach(({ select, options }) => {
+            const currentValue = select.value;
+            populateSelect(select, options, currentValue);
+          });
+        }
+
+        // Toggle language
+        function toggleLanguage() {
+          const newLang = currentLang === "zh" ? "en" : "zh";
+          updateLanguage(newLang);
+        }
+
+        // ============================================
+        // Data Definitions
+        // ============================================
+        const slashCommands = {
+          essential: [
+            { id: "brainstorm", name: "brainstorm", key: "brainstorm" },
+            { id: "help", name: "help", key: "help" },
+            { id: "research", name: "research", key: "research" },
+            { id: "implement", name: "implement", key: "implement" },
+            { id: "analyze", name: "analyze", key: "analyze" },
+            { id: "business-panel", name: "business-panel", key: "businessPanel" },
+            { id: "spec-panel", name: "spec-panel", key: "specPanel" },
+            { id: "troubleshoot", name: "troubleshoot", key: "troubleshoot" },
+            { id: "test", name: "test", key: "test" },
+            { id: "improve", name: "improve", key: "improve" },
+            { id: "document", name: "document", key: "document" },
+            { id: "workflow", name: "workflow", key: "workflow" },
+          ],
+          development: [
+            { id: "workflow", name: "workflow", key: "workflow" },
+            { id: "implement", name: "implement", key: "implement" },
+            { id: "build", name: "build", key: "build" },
+            { id: "design", name: "design", key: "design" },
+          ],
+          analysis: [
+            { id: "analyze", name: "analyze", key: "analyze" },
+            { id: "research", name: "research", key: "research" },
+            { id: "business-panel", name: "business-panel", key: "businessPanel" },
+            { id: "spec-panel", name: "spec-panel", key: "specPanel" },
+            { id: "troubleshoot", name: "troubleshoot", key: "troubleshoot" },
+            { id: "explain", name: "explain", key: "explain" },
+          ],
+          quality: [
+            { id: "improve", name: "improve", key: "improve" },
+            { id: "cleanup", name: "cleanup", key: "cleanup" },
+            { id: "test", name: "test", key: "test" },
+            { id: "document", name: "document", key: "document" },
+          ],
+          management: [
+            { id: "estimate", name: "estimate", key: "estimate" },
+            { id: "task", name: "task", key: "task" },
+            { id: "spawn", name: "spawn", key: "spawn" },
+          ],
+          utility: [
+            { id: "help", name: "help", key: "help" },
+            { id: "git", name: "git", key: "git" },
+            { id: "index", name: "index", key: "index" },
+          ],
+          session: [
+            { id: "load", name: "load", key: "load" },
+            { id: "save", name: "save", key: "save" },
+            { id: "reflect", name: "reflect", key: "reflect" },
+            { id: "select-tool", name: "select-tool", key: "selectTool" },
+          ],
+        };
+
+        const categoryNames = {
+          essential: { zh: "核心命令", en: "Essential Commands" },
+          development: { zh: "开发命令", en: "Development Commands" },
+          analysis: { zh: "分析命令", en: "Analysis Commands" },
+          quality: { zh: "质量命令", en: "Quality Commands" },
+          management: { zh: "项目管理命令", en: "Project Management Commands" },
+          utility: { zh: "工具命令", en: "Utility Commands" },
+          session: { zh: "会话命令", en: "Session Commands" },
+        };
+
+        const agents = [
+          { id: "", name: "", key: "noneAgent" },
+          { id: "backend-architect", name: "backend-architect", key: "agentBackendArchitect" },
+          { id: "deep-research-agent", name: "deep-research-agent", key: "agentDeepResearchAgent" },
+          { id: "devops-architect", name: "devops-architect", key: "agentDevopsArchitect" },
+          { id: "frontend-architect", name: "frontend-architect", key: "agentFrontendArchitect" },
+          { id: "learning-guide", name: "learning-guide", key: "agentLearningGuide" },
+          {
+            id: "performance-engineer",
+            name: "performance-engineer",
+            key: "agentPerformanceEngineer",
+          },
+          { id: "pm-agent", name: "pm-agent", key: "agentPmAgent" },
+          { id: "python-expert", name: "python-expert", key: "agentPythonExpert" },
+          { id: "quality-engineer", name: "quality-engineer", key: "agentQualityEngineer" },
+          { id: "refactoring-expert", name: "refactoring-expert", key: "agentRefactoringExpert" },
+          {
+            id: "requirements-analyst",
+            name: "requirements-analyst",
+            key: "agentRequirementsAnalyst",
+          },
+          { id: "root-cause-analyst", name: "root-cause-analyst", key: "agentRootCauseAnalyst" },
+          { id: "security-engineer", name: "security-engineer", key: "agentSecurityEngineer" },
+          { id: "system-architect", name: "system-architect", key: "agentSystemArchitect" },
+          { id: "technical-writer", name: "technical-writer", key: "agentTechnicalWriter" },
+        ];
+
+        function updateCommandDescriptions() {
+          // Re-populate slash commands with current language descriptions
+          const currentValue = slashCommandSelect.value;
+          slashCommandSelect.innerHTML = "";
+
+          Object.entries(slashCommands).forEach(([category, commands]) => {
+            const group = document.createElement("optgroup");
+            group.label = categoryNames[category][currentLang];
+
+            commands.forEach((cmd) => {
+              const option = document.createElement("option");
+              option.value = cmd.id;
+              option.textContent = `${cmd.name} - ${t(cmd.key)}`;
+              if (cmd.id === currentValue) {
+                option.selected = true;
+              }
+              group.appendChild(option);
+            });
+
+            slashCommandSelect.appendChild(group);
+          });
+        }
+
+        function updateAgentDescriptions() {
+          const currentValue = agentSelect.value;
+          agentSelect.innerHTML = "";
+
+          agents.forEach((agent) => {
+            const option = document.createElement("option");
+            option.value = agent.id;
+            if (agent.id === "") {
+              option.textContent = t(agent.key);
+            } else {
+              option.textContent = `${agent.name} - ${t(agent.key)}`;
+            }
+            if (agent.id === currentValue) {
+              option.selected = true;
+            }
+            agentSelect.appendChild(option);
+          });
+        }
+
+        const flagDefinitions = {
+          thinking: {
+            options: [
+              { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+              { value: "think", label: "--think", tooltipKey: "tooltipThink" },
+              { value: "think-hard", label: "--think-hard", tooltipKey: "tooltipThinkHard" },
+              { value: "ultrathink", label: "--ultrathink", tooltipKey: "tooltipUltrathink" },
+            ],
+          },
+          depth: {
+            options: [
+              { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+              { value: "quick", label: "quick", tooltipKey: "tooltipQuick" },
+              { value: "standard", label: "standard", tooltipKey: "tooltipStandard" },
+              { value: "deep", label: "deep", tooltipKey: "tooltipDeep" },
+              { value: "exhaustive", label: "exhaustive", tooltipKey: "tooltipExhaustive" },
+              { value: "shallow", label: "shallow", tooltipKey: "tooltipShallow" },
+              { value: "normal", label: "normal", tooltipKey: "tooltipNormal" },
+            ],
+          },
+          type: {
+            options: [
+              { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+              { value: "frontend", label: "frontend", tooltipKey: "tooltipTypeFrontend" },
+              { value: "backend", label: "backend", tooltipKey: "tooltipTypeBackend" },
+              { value: "fullstack", label: "fullstack", tooltipKey: "tooltipTypeFullstack" },
+              { value: "unit", label: "unit", tooltipKey: "tooltipTypeUnit" },
+              { value: "integration", label: "integration", tooltipKey: "tooltipTypeIntegration" },
+              { value: "e2e", label: "e2e", tooltipKey: "tooltipTypeE2e" },
+              { value: "api", label: "api", tooltipKey: "tooltipTypeApi" },
+              { value: "user-guide", label: "user-guide", tooltipKey: "tooltipTypeUserGuide" },
+              { value: "technical", label: "technical", tooltipKey: "tooltipTypeTechnical" },
+              { value: "docs", label: "docs", tooltipKey: "tooltipTypeDocs" },
+              { value: "readme", label: "readme", tooltipKey: "tooltipTypeReadme" },
+              { value: "structure", label: "structure", tooltipKey: "tooltipTypeStructure" },
+              { value: "bug", label: "bug", tooltipKey: "tooltipTypeBug" },
+              { value: "build", label: "build", tooltipKey: "tooltipTypeBuild" },
+              { value: "performance", label: "performance", tooltipKey: "tooltipTypePerformance" },
+              { value: "deployment", label: "deployment", tooltipKey: "tooltipTypeDeployment" },
+              {
+                value: "architecture",
+                label: "architecture",
+                tooltipKey: "tooltipTypeArchitecture",
+              },
+              { value: "component", label: "component", tooltipKey: "tooltipTypeComponent" },
+              { value: "database", label: "database", tooltipKey: "tooltipTypeDatabase" },
+              { value: "code", label: "code", tooltipKey: "tooltipTypeCode" },
+              { value: "imports", label: "imports", tooltipKey: "tooltipTypeImports" },
+              { value: "files", label: "files", tooltipKey: "tooltipTypeFiles" },
+              { value: "all", label: "all", tooltipKey: "tooltipTypeAll" },
+              { value: "time", label: "time", tooltipKey: "tooltipTypeTime" },
+              { value: "effort", label: "effort", tooltipKey: "tooltipTypeEffort" },
+              { value: "complexity", label: "complexity", tooltipKey: "tooltipTypeComplexity" },
+              { value: "quality", label: "quality", tooltipKey: "tooltipTypeQuality" },
+              {
+                value: "maintainability",
+                label: "maintainability",
+                tooltipKey: "tooltipTypeMaintainability",
+              },
+              { value: "style", label: "style", tooltipKey: "tooltipTypeStyle" },
+              { value: "security", label: "security", tooltipKey: "tooltipTypeSecurity" },
+              { value: "dev", label: "dev", tooltipKey: "tooltipTypeDev" },
+              { value: "prod", label: "prod", tooltipKey: "tooltipTypeProd" },
+              { value: "test", label: "test", tooltipKey: "tooltipTypeTest" },
+              { value: "task", label: "task", tooltipKey: "tooltipTypeTask" },
+              { value: "session", label: "session", tooltipKey: "tooltipTypeSession" },
+              { value: "completion", label: "completion", tooltipKey: "tooltipTypeCompletion" },
+            ],
+          },
+          focus: {
+            options: [
+              { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+              { value: "performance", label: "performance", tooltipKey: "tooltipFocusPerformance" },
+              { value: "quality", label: "quality", tooltipKey: "tooltipFocusQuality" },
+              {
+                value: "architecture",
+                label: "architecture",
+                tooltipKey: "tooltipFocusArchitecture",
+              },
+              {
+                value: "accessibility",
+                label: "accessibility",
+                tooltipKey: "tooltipFocusAccessibility",
+              },
+              { value: "testing", label: "testing", tooltipKey: "tooltipFocusTesting" },
+              { value: "security", label: "security", tooltipKey: "tooltipFocusSecurity" },
+            ],
+          },
+          strategy: {
+            options: [
+              { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+              { value: "systematic", label: "systematic", tooltipKey: "tooltipStrategySystematic" },
+              { value: "creative", label: "creative", tooltipKey: "tooltipStrategyCreative" },
+              { value: "planning", label: "planning", tooltipKey: "tooltipStrategyPlanning" },
+              { value: "intent", label: "intent", tooltipKey: "tooltipStrategyIntent" },
+              { value: "unified", label: "unified", tooltipKey: "tooltipStrategyUnified" },
+              { value: "agile", label: "agile", tooltipKey: "tooltipStrategyAgile" },
+              { value: "waterfall", label: "waterfall", tooltipKey: "tooltipStrategyWaterfall" },
+              { value: "enterprise", label: "enterprise", tooltipKey: "tooltipStrategyEnterprise" },
+              { value: "sequential", label: "sequential", tooltipKey: "tooltipStrategySequential" },
+              { value: "parallel", label: "parallel", tooltipKey: "tooltipStrategyParallel" },
+              { value: "adaptive", label: "adaptive", tooltipKey: "tooltipStrategyAdaptive" },
+            ],
+          },
+          mode: {
+            options: [
+              { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+              { value: "discussion", label: "discussion", tooltipKey: "tooltipModeDiscussion" },
+              { value: "debate", label: "debate", tooltipKey: "tooltipModeDebate" },
+              { value: "socratic", label: "socratic", tooltipKey: "tooltipModeSocratic" },
+              { value: "critique", label: "critique", tooltipKey: "tooltipModeCritique" },
+            ],
+          },
+          format: {
+            options: [
+              { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+              { value: "markdown", label: "markdown", tooltipKey: "tooltipFormatMarkdown" },
+              { value: "md", label: "md", tooltipKey: "tooltipFormatMd" },
+              { value: "html", label: "html", tooltipKey: "tooltipFormatHtml" },
+              { value: "text", label: "text", tooltipKey: "tooltipFormatText" },
+              { value: "json", label: "json", tooltipKey: "tooltipFormatJson" },
+              { value: "yaml", label: "yaml", tooltipKey: "tooltipFormatYaml" },
+              { value: "report", label: "report", tooltipKey: "tooltipFormatReport" },
+              { value: "diagram", label: "diagram", tooltipKey: "tooltipFormatDiagram" },
+              { value: "spec", label: "spec", tooltipKey: "tooltipFormatSpec" },
+              { value: "code", label: "code", tooltipKey: "tooltipFormatCode" },
+              { value: "examples", label: "examples", tooltipKey: "tooltipFormatExamples" },
+              {
+                value: "interactive",
+                label: "interactive",
+                tooltipKey: "tooltipFormatInteractive",
+              },
+            ],
+          },
+          scope: {
+            options: [
+              { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+              { value: "file", label: "file", tooltipKey: "tooltipScopeFile" },
+              { value: "module", label: "module", tooltipKey: "tooltipScopeModule" },
+              { value: "project", label: "project", tooltipKey: "tooltipScopeProject" },
+              { value: "system", label: "system", tooltipKey: "tooltipScopeSystem" },
+            ],
+          },
+          level: {
+            options: [
+              { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+              { value: "basic", label: "basic", tooltipKey: "tooltipLevelBasic" },
+              {
+                value: "intermediate",
+                label: "intermediate",
+                tooltipKey: "tooltipLevelIntermediate",
+              },
+              { value: "advanced", label: "advanced", tooltipKey: "tooltipLevelAdvanced" },
+            ],
+          },
+          unit: {
+            options: [
+              { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+              { value: "hours", label: "hours", tooltipKey: "tooltipUnitHours" },
+              { value: "days", label: "days", tooltipKey: "tooltipUnitDays" },
+              { value: "weeks", label: "weeks", tooltipKey: "tooltipUnitWeeks" },
+            ],
+          },
+          context: {
+            options: [
+              { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+              { value: "react", label: "React", tooltipKey: "tooltipContextReact" },
+              { value: "security", label: "Security", tooltipKey: "tooltipContextSecurity" },
+              {
+                value: "performance",
+                label: "Performance",
+                tooltipKey: "tooltipContextPerformance",
+              },
+            ],
+          },
+          concurrency: {
+            options: [
+              { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+              ...Array.from({ length: 15 }, (_, i) => ({
+                value: String(i + 1),
+                label: String(i + 1),
+                tooltip: (val) => createNumericTooltip("tooltipConcurrency", val),
+              })),
+            ],
+          },
+          iterations: {
+            options: [
+              { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+              ...Array.from({ length: 10 }, (_, i) => ({
+                value: String(i + 1),
+                label: String(i + 1),
+                tooltip: (val) => createNumericTooltip("tooltipIterations", val),
+              })),
+            ],
+          },
+          mcpFlags: {
+            options: [
+              { value: "c7", label: "--c7", tooltipKey: "tooltipC7" },
+              { value: "seq", label: "--seq", tooltipKey: "tooltipSeq" },
+              { value: "magic", label: "--magic", tooltipKey: "tooltipMagic" },
+              { value: "play", label: "--play", tooltipKey: "tooltipPlay" },
+              { value: "chrome", label: "--chrome", tooltipKey: "tooltipChrome" },
+              { value: "tavily", label: "--tavily", tooltipKey: "tooltipTavily" },
+              { value: "morph", label: "--morph", tooltipKey: "tooltipMorph" },
+              { value: "serena", label: "--serena", tooltipKey: "tooltipSerena" },
+            ],
+          },
+          behaviorFlags: {
+            options: [
+              { value: "brainstorm", label: "--brainstorm", tooltipKey: "tooltipBrainstorm" },
+              { value: "introspect", label: "--introspect", tooltipKey: "tooltipIntrospect" },
+              { value: "task-manage", label: "--task-manage", tooltipKey: "tooltipTaskManage" },
+              { value: "orchestrate", label: "--orchestrate", tooltipKey: "tooltipOrchestrate" },
+              {
+                value: "token-efficient",
+                label: "--token-efficient",
+                tooltipKey: "tooltipTokenEfficient",
+              },
+            ],
+          },
+          executionControlFlags: {
+            options: [
+              { value: "loop", label: "--loop", tooltipKey: "tooltipLoop" },
+              { value: "safe-mode", label: "--safe-mode", tooltipKey: "tooltipSafeMode" },
+              { value: "validate", label: "--validate", tooltipKey: "tooltipValidate" },
+              { value: "delegate", label: "--delegate", tooltipKey: "tooltipDelegate" },
+            ],
+          },
+          advancedExecutionFlags: {
+            options: [
+              { value: "all-mcp", label: "--all-mcp", tooltipKey: "tooltipAllMcp" },
+              { value: "no-mcp", label: "--no-mcp", tooltipKey: "tooltipNoMcp" },
+              {
+                value: "frontend-verify",
+                label: "--frontend-verify",
+                tooltipKey: "tooltipFrontendVerify",
+              },
+            ],
+          },
+          systemFlags: {
+            options: [
+              { value: "verbose", label: "--verbose", tooltipKey: "tooltipVerbose" },
+              { value: "quiet", label: "--quiet", tooltipKey: "tooltipQuiet" },
+              { value: "dry-run", label: "--dry-run", tooltipKey: "tooltipDryRun" },
+              { value: "force", label: "--force", tooltipKey: "tooltipForce" },
+              { value: "yes", label: "--yes", tooltipKey: "tooltipYes" },
+              { value: "legacy", label: "--legacy", tooltipKey: "tooltipLegacy" },
+              { value: "version", label: "--version", tooltipKey: "tooltipVersion" },
+              { value: "help", label: "--help", tooltipKey: "tooltipHelp" },
+            ],
+          },
+          booleanFlags: {
+            options: [
+              { value: "preview", label: "--preview", tooltipKey: "tooltipPreview" },
+              { value: "fix", label: "--fix", tooltipKey: "tooltipFix" },
+              { value: "coverage", label: "--coverage", tooltipKey: "tooltipCoverage" },
+              { value: "watch", label: "--watch", tooltipKey: "tooltipWatch" },
+              { value: "trace", label: "--trace", tooltipKey: "tooltipTrace" },
+              { value: "clean", label: "--clean", tooltipKey: "tooltipClean" },
+              { value: "optimize", label: "--optimize", tooltipKey: "tooltipOptimize" },
+              { value: "breakdown", label: "--breakdown", tooltipKey: "tooltipBreakdown" },
+              { value: "interactive", label: "--interactive", tooltipKey: "tooltipInteractive" },
+              { value: "parallel", label: "--parallel", tooltipKey: "tooltipParallel" },
+              { value: "safe", label: "--safe", tooltipKey: "tooltipSafe" },
+              { value: "aggressive", label: "--aggressive", tooltipKey: "tooltipAggressive" },
+              { value: "smart-commit", label: "--smart-commit", tooltipKey: "tooltipSmartCommit" },
+              { value: "analyze", label: "--analyze", tooltipKey: "tooltipAnalyze" },
+              { value: "explain", label: "--explain", tooltipKey: "tooltipExplain" },
+            ],
+          },
+        };
+
+        const commandFlagsMapping = {
+          analyze: {
+            selectFlags: {
+              focus: ["security", "performance", "quality", "architecture"],
+              depth: ["quick", "deep"],
+              format: ["text", "json", "report"],
+            },
+            booleanFlags: [],
+          },
+          build: {
+            selectFlags: { type: ["dev", "prod", "test"] },
+            booleanFlags: ["clean", "optimize", "verbose"],
+          },
+          design: {
+            selectFlags: {
+              type: ["architecture", "api", "component", "database"],
+              format: ["diagram", "spec", "code"],
+            },
+            booleanFlags: [],
+          },
+          explain: {
+            selectFlags: {
+              level: ["basic", "intermediate", "advanced"],
+              format: ["text", "examples", "interactive"],
+              context: ["react", "security", "performance"],
+            },
+            booleanFlags: [],
+          },
+          improve: {
+            selectFlags: {
+              type: ["quality", "performance", "maintainability", "style", "security"],
+            },
+            booleanFlags: ["safe", "interactive", "preview"],
+          },
+          task: {
+            selectFlags: { strategy: ["systematic", "agile", "enterprise"] },
+            booleanFlags: ["parallel", "delegate"],
+          },
+          workflow: {
+            selectFlags: {
+              strategy: ["systematic", "agile", "enterprise"],
+              depth: ["shallow", "normal", "deep"],
+            },
+            booleanFlags: ["parallel"],
+          },
+          troubleshoot: {
+            selectFlags: { type: ["bug", "build", "performance", "deployment"] },
+            booleanFlags: ["trace", "fix"],
+          },
+          cleanup: {
+            selectFlags: { type: ["code", "imports", "files", "all"] },
+            booleanFlags: ["safe", "aggressive", "interactive", "preview"],
+          },
+          estimate: {
+            selectFlags: {
+              type: ["time", "effort", "complexity"],
+              unit: ["hours", "days", "weeks"],
+            },
+            booleanFlags: ["breakdown"],
+          },
+          index: {
+            selectFlags: {
+              type: ["docs", "api", "structure", "readme"],
+              format: ["md", "json", "yaml"],
+            },
+            booleanFlags: [],
+          },
+          reflect: {
+            selectFlags: { type: ["task", "session", "completion"] },
+            booleanFlags: ["analyze", "validate"],
+          },
+          spawn: {
+            selectFlags: {
+              strategy: ["sequential", "parallel", "adaptive"],
+              depth: ["normal", "deep"],
+            },
+            booleanFlags: [],
+          },
+          git: {
+            selectFlags: {},
+            booleanFlags: ["smart-commit", "interactive"],
+          },
+          "select-tool": {
+            selectFlags: {},
+            booleanFlags: ["analyze", "explain"],
+          },
+          test: {
+            selectFlags: { type: ["unit", "integration", "e2e"] },
+            booleanFlags: ["coverage", "watch"],
+          },
+          research: {
+            selectFlags: {
+              depth: ["quick", "standard", "deep", "exhaustive"],
+              format: ["markdown", "text", "json"],
+            },
+            booleanFlags: [],
+          },
+          brainstorm: {
+            selectFlags: {
+              strategy: ["systematic", "creative", "planning", "intent", "unified"],
+              mode: ["discussion", "debate", "socratic", "critique"],
+            },
+            booleanFlags: [],
+          },
+          implement: {
+            selectFlags: {
+              type: ["frontend", "backend", "fullstack"],
+              strategy: ["systematic", "agile"],
+            },
+            booleanFlags: ["preview"],
+          },
+          document: {
+            selectFlags: {
+              type: ["api", "user-guide", "technical"],
+              format: ["markdown", "html", "text"],
+            },
+            booleanFlags: [],
+          },
+          "business-panel": {
+            selectFlags: {
+              mode: ["discussion", "debate", "critique"],
+              strategy: ["systematic", "creative"],
+            },
+            booleanFlags: [],
+          },
+          "spec-panel": {
+            selectFlags: {
+              mode: ["discussion", "debate", "critique"],
+              strategy: ["systematic", "creative"],
+            },
+            booleanFlags: [],
+          },
+          help: { selectFlags: {}, booleanFlags: [] },
+          load: { selectFlags: {}, booleanFlags: [] },
+          save: { selectFlags: {}, booleanFlags: [] },
+        };
+
+        // Flag configuration with their element IDs and option mappings
+        const flagElements = {
+          focus: { selectId: "focusFlag", options: flagDefinitions.focus.options },
+          depth: { selectId: "depthFlag", options: flagDefinitions.depth.options },
+          format: { selectId: "formatFlag", options: flagDefinitions.format.options },
+          type: { selectId: "typeFlag", options: flagDefinitions.type.options },
+          strategy: { selectId: "strategyFlag", options: flagDefinitions.strategy.options },
+          level: { selectId: "levelFlag", options: flagDefinitions.level.options },
+          mode: { selectId: "modeFlag", options: flagDefinitions.mode.options },
+          unit: { selectId: "unitFlag", options: flagDefinitions.unit.options },
+          context: { selectId: "contextFlag", options: flagDefinitions.context.options },
+        };
+
+        const booleanFlagElements = {
+          preview: { containerClass: "booleanFlags", label: "--preview" },
+          fix: { containerClass: "booleanFlags", label: "--fix" },
+          coverage: { containerClass: "booleanFlags", label: "--coverage" },
+          watch: { containerClass: "booleanFlags", label: "--watch" },
+          trace: { containerClass: "booleanFlags", label: "--trace" },
+          clean: { containerClass: "booleanFlags", label: "--clean" },
+          optimize: { containerClass: "booleanFlags", label: "--optimize" },
+          verbose: { containerClass: "booleanFlags", label: "--verbose" },
+          breakdown: { containerClass: "booleanFlags", label: "--breakdown" },
+          interactive: { containerClass: "booleanFlags", label: "--interactive" },
+          parallel: { containerClass: "booleanFlags", label: "--parallel" },
+          safe: { containerClass: "booleanFlags", label: "--safe" },
+          aggressive: { containerClass: "booleanFlags", label: "--aggressive" },
+          "smart-commit": { containerClass: "booleanFlags", label: "--smart-commit" },
+          analyze: { containerClass: "booleanFlags", label: "--analyze" },
+          explain: { containerClass: "booleanFlags", label: "--explain" },
+          validate: { containerClass: "booleanFlags", label: "--validate" },
+          delegate: { containerClass: "booleanFlags", label: "--delegate" },
+        };
+
+        const allSelectFlags = [
+          "focus",
+          "depth",
+          "format",
+          "type",
+          "strategy",
+          "level",
+          "mode",
+          "unit",
+          "context",
+        ];
+        const allBooleanFlags = [
+          "preview",
+          "fix",
+          "coverage",
+          "watch",
+          "trace",
+          "clean",
+          "optimize",
+          "verbose",
+          "breakdown",
+          "interactive",
+          "parallel",
+          "safe",
+          "aggressive",
+          "smart-commit",
+          "analyze",
+          "explain",
+          "validate",
+          "delegate",
+        ];
+
+        // Unified argument placeholder mapping using translation keys
+        const argumentPlaceholderKeys = {
+          brainstorm: "phBrainstorm",
+          research: "phResearch",
+          implement: "phImplement",
+          analyze: "phAnalyze",
+          troubleshoot: "phTroubleshoot",
+          document: "phDocument",
+          improve: "phImprove",
+          design: "phDesign",
+          workflow: "phWorkflow",
+          "business-panel": "phBusinessPanel",
+          "spec-panel": "phSpecPanel",
+          test: "phTest",
+          build: "phBuild",
+          git: "phGit",
+          cleanup: "phCleanup",
+          explain: "phExplain",
+          estimate: "phEstimate",
+          task: "phTask",
+          spawn: "phSpawn",
+          load: "phLoad",
+          save: "phSave",
+          reflect: "phReflect",
+          "select-tool": "phSelectTool",
+          help: "phHelp",
+          index: "phIndex",
+          default: "phDefault",
+        };
+
+        // ============================================
+        // Application State
+        // ============================================
+        const appState = {
+          commandType: "slash",
+          selectedCommand: "brainstorm",
+          selectedAgent: "",
+          argument: "",
+          flags: {
+            think: "",
+            depth: "",
+            type: "",
+            focus: "",
+            strategy: "",
+            mode: "",
+            format: "",
+            scope: "",
+            level: "",
+            unit: "",
+            concurrency: "",
+            iterations: "",
+            context: "",
+            installDir: "",
+            booleanFlags: [],
+            executionControlFlags: [],
+            advancedExecutionFlags: [],
+            systemFlags: [],
+            mcpFlags: [],
+            behaviorFlags: [],
+          },
+        };
+
+        // ============================================
+        // DOM Elements
+        // ============================================
+        const slashCommandSelect = document.getElementById("slashCommand");
+        const agentSelect = document.getElementById("agentSelect");
+        const thinkingFlagSelect = document.getElementById("thinkingFlag");
+        const focusFlagSelect = document.getElementById("focusFlag");
+        const depthFlagSelect = document.getElementById("depthFlag");
+        const formatFlagSelect = document.getElementById("formatFlag");
+        const typeFlagSelect = document.getElementById("typeFlag");
+        const strategyFlagSelect = document.getElementById("strategyFlag");
+        const modeFlagSelect = document.getElementById("modeFlag");
+        const levelFlagSelect = document.getElementById("levelFlag");
+        const unitFlagSelect = document.getElementById("unitFlag");
+        const contextFlagSelect = document.getElementById("contextFlag");
+        const scopeFlagSelect = document.getElementById("scopeFlag");
+        const concurrencyFlagSelect = document.getElementById("concurrencyFlag");
+        const iterationsFlagSelect = document.getElementById("iterationsFlag");
+        const mcpFlagsContainer = document.getElementById("mcpFlags");
+        const behaviorFlagsContainer = document.getElementById("behaviorFlags");
+        const executionControlFlagsContainer = document.getElementById("executionControlFlags");
+        const booleanFlagsContainer = document.getElementById("booleanFlags");
+        const advancedExecutionFlagsContainer = document.getElementById("advancedExecutionFlags");
+        const systemFlagsContainer = document.getElementById("systemFlags");
+        const argumentInput = document.getElementById("argumentInput");
+        const commandOutput = document.getElementById("commandOutput");
+        const copyBtn = document.getElementById("copyBtn");
+        const commandTypeInputs = document.querySelectorAll('input[name="commandType"]');
+        const slashCommandGroup = document.getElementById("slashCommandGroup");
+        const agentGroup = document.getElementById("agentGroup");
+
+        // ============================================
+        // Utility Functions
+        // ============================================
+        /**
+         * Populates a select element with options.
+         * @param {HTMLSelectElement} selectElement - The select element to populate
+         * @param {Array} options - Array of option objects with value, label/labelKey, tooltip/tooltipKey
+         * @param {string} [selectedValue=''] - The value to select by default
+         */
+        function populateSelect(selectElement, options, selectedValue = "") {
+          selectElement.innerHTML = "";
+          options.forEach((opt) => {
+            const option = document.createElement("option");
+            option.value = opt.value;
+            // Use labelKey for translation, fallback to label
+            option.textContent = opt.labelKey ? t(opt.labelKey) : opt.label;
+            // Use tooltipKey for translation, fallback to tooltip
+            let tooltip = opt.tooltipKey ? t(opt.tooltipKey) : opt.tooltip;
+            // Handle function-based tooltips for dynamic values
+            if (typeof tooltip === "function") {
+              tooltip = tooltip(opt.value);
+            }
+            if (tooltip) {
+              option.title = tooltip;
+            }
+            if (opt.value === selectedValue) {
+              option.selected = true;
+            }
+            selectElement.appendChild(option);
+          });
+        }
+
+        /**
+         * Creates a custom checkbox element with label and tooltip.
+         * @param {string} id - The ID for the checkbox input
+         * @param {string} label - The display label text
+         * @param {boolean} [checked=false] - Whether the checkbox is initially checked
+         * @param {boolean} [disabled=false] - Whether the checkbox is disabled
+         * @param {string} [tooltip=''] - Optional tooltip text (use tooltipKey for translation)
+         * @param {string} [tooltipKey=''] - Optional tooltip translation key
+         * @returns {{wrapper: HTMLLabelElement, input: HTMLInputElement}} The created elements
+         */
+        function createCheckbox(
+          id,
+          label,
+          checked = false,
+          disabled = false,
+          tooltip = "",
+          tooltipKey = "",
+        ) {
+          const wrapper = document.createElement("label");
+          wrapper.className =
+            "checkbox-item" + (checked ? " checked" : "") + (disabled ? " disabled" : "");
+          // Use tooltipKey for translation, fallback to tooltip
+          const tooltipText = tooltipKey ? t(tooltipKey) : tooltip;
+          if (tooltipText) {
+            wrapper.setAttribute("data-tooltip", tooltipText);
+          }
+
+          const input = document.createElement("input");
+          input.type = "checkbox";
+          input.id = id;
+          input.value = id.replace("Flag", "").replace("cb-", "");
+          input.checked = checked;
+          input.disabled = disabled;
+
+          const span = document.createElement("span");
+          span.textContent = label;
+
+          wrapper.appendChild(input);
+          wrapper.appendChild(span);
+
+          return { wrapper, input };
+        }
+
+        // ============================================
+        // Initialization Functions
+        // ============================================
+        /**
+         * Initializes the slash command dropdown with categories and translations.
+         */
+        function initializeSlashCommands() {
+          // Re-populate slash commands with current language
+          slashCommandSelect.innerHTML = "";
+          Object.entries(slashCommands).forEach(([category, commands]) => {
+            const group = document.createElement("optgroup");
+            group.label = categoryNames[category][currentLang];
+
+            commands.forEach((cmd) => {
+              const option = document.createElement("option");
+              option.value = cmd.id;
+              option.textContent = `${cmd.name} - ${t(cmd.key)}`;
+              if (cmd.id === appState.selectedCommand) {
+                option.selected = true;
+              }
+              group.appendChild(option);
+            });
+
+            slashCommandSelect.appendChild(group);
+          });
+        }
+
+        /**
+         * Initializes the agent dropdown with all available agents.
+         */
+        function initializeAgents() {
+          agentSelect.innerHTML = "";
+          agents.forEach((agent) => {
+            const option = document.createElement("option");
+            option.value = agent.id;
+            if (agent.id === "") {
+              option.textContent = t(agent.key);
+            } else {
+              option.textContent = `${agent.name} - ${t(agent.key)}`;
+            }
+            if (agent.id === appState.selectedAgent) {
+              option.selected = true;
+            }
+            agentSelect.appendChild(option);
+          });
+        }
+
+        /**
+         * Initializes all flag dropdown selectors with their options.
+         */
+        function initializeFlagSelects() {
+          // Thinking flags
+          populateSelect(
+            thinkingFlagSelect,
+            flagDefinitions.thinking.options,
+            appState.flags.think,
+          );
+
+          // Depth flags
+          populateSelect(depthFlagSelect, flagDefinitions.depth.options, appState.flags.depth);
+
+          // Type flags
+          populateSelect(typeFlagSelect, flagDefinitions.type.options, appState.flags.type);
+
+          // Focus flags
+          populateSelect(focusFlagSelect, flagDefinitions.focus.options, appState.flags.focus);
+
+          // Strategy flags
+          populateSelect(
+            strategyFlagSelect,
+            flagDefinitions.strategy.options,
+            appState.flags.strategy,
+          );
+
+          // Mode flags
+          populateSelect(modeFlagSelect, flagDefinitions.mode.options, appState.flags.mode);
+
+          // Format flags
+          populateSelect(formatFlagSelect, flagDefinitions.format.options, appState.flags.format);
+
+          // Scope flags
+          populateSelect(scopeFlagSelect, flagDefinitions.scope.options, appState.flags.scope);
+
+          // Level flags
+          populateSelect(levelFlagSelect, flagDefinitions.level.options, appState.flags.level);
+
+          // Unit flags
+          populateSelect(unitFlagSelect, flagDefinitions.unit.options, appState.flags.unit);
+
+          // Context flags
+          populateSelect(
+            contextFlagSelect,
+            flagDefinitions.context.options,
+            appState.flags.context,
+          );
+
+          // Concurrency flags
+          populateSelect(
+            concurrencyFlagSelect,
+            flagDefinitions.concurrency.options,
+            appState.flags.concurrency,
+          );
+
+          // Iterations flags
+          populateSelect(
+            iterationsFlagSelect,
+            flagDefinitions.iterations.options,
+            appState.flags.iterations,
+          );
+        }
+
+        /**
+         * Initializes a checkbox group with the given configuration.
+         * Generic function to reduce code duplication.
+         * @param {HTMLElement} container - The container element
+         * @param {Array} options - Array of flag options with value, label, tooltip/tooltipKey
+         * @param {string} prefix - Prefix for checkbox IDs (e.g., 'mcp-', 'behavior-')
+         */
+        function initializeCheckboxGroup(container, options, prefix) {
+          if (!container) return;
+          options.forEach((flag) => {
+            const { wrapper, input } = createCheckbox(
+              prefix + flag.value,
+              flag.label,
+              false,
+              false,
+              flag.tooltip,
+              flag.tooltipKey,
+            );
+            container.appendChild(wrapper);
+            input.addEventListener("change", () => {
+              updateCommandOutput();
+            });
+          });
+        }
+
+        function initializeCheckboxGroups() {
+          // Initialize all checkbox groups using the generic function
+          initializeCheckboxGroup(mcpFlagsContainer, flagDefinitions.mcpFlags.options, "mcp-");
+          initializeCheckboxGroup(
+            behaviorFlagsContainer,
+            flagDefinitions.behaviorFlags.options,
+            "behavior-",
+          );
+          initializeCheckboxGroup(
+            executionControlFlagsContainer,
+            flagDefinitions.executionControlFlags.options,
+            "exec-",
+          );
+          initializeCheckboxGroup(
+            booleanFlagsContainer,
+            flagDefinitions.booleanFlags.options,
+            "bool-",
+          );
+          initializeCheckboxGroup(
+            advancedExecutionFlagsContainer,
+            flagDefinitions.advancedExecutionFlags.options,
+            "adv-",
+          );
+          initializeCheckboxGroup(
+            systemFlagsContainer,
+            flagDefinitions.systemFlags.options,
+            "sys-",
+          );
+        }
+
+        // ============================================
+        // Command Building Functions
+        // ============================================
+        /**
+         * Sanitizes argument value for shell command safety.
+         * Escapes backslashes, double quotes, and dollar signs.
+         * @param {string} value - The raw argument value
+         * @returns {string} The sanitized value
+         */
+        function sanitizeArgument(value) {
+          // Remove null bytes and control characters
+          let sanitized = value.replace(/[\x00-\x1F\x7F]/g, "");
+          // Escape characters that could break shell quoting
+          sanitized = sanitized.replace(/\\/g, "\\\\"); // Backslashes first
+          sanitized = sanitized.replace(/\$/g, "\\$"); // Dollar signs (variable expansion)
+          sanitized = sanitized.replace(/"/g, '\\"'); // Double quotes inside our quotes
+          sanitized = sanitized.replace(/`/g, "\\`"); // Backticks (command substitution)
+          return sanitized;
+        }
+
+        /**
+         * Builds the complete command string based on current form state.
+         * @returns {string} The generated command
+         */
+        function buildCommand() {
+          const parts = [];
+
+          // Prefix based on command type
+          if (appState.commandType === "slash") {
+            parts.push("/sc:" + slashCommandSelect.value);
+
+            // Add argument first (before agent, per official docs format)
+            const argValue = argumentInput.value.trim();
+            if (argValue) {
+              parts.push(`"${sanitizeArgument(argValue)}"`);
+            }
+
+            // Add agent if selected (command + agent combination)
+            const selectedAgent = agentSelect.value;
+            if (selectedAgent) {
+              parts.push("@" + selectedAgent);
+            }
+          } else {
+            // Agent-only mode
+            const selectedAgent = agentSelect.value;
+            if (selectedAgent) {
+              parts.push("@" + selectedAgent);
+            }
+
+            // Add argument after agent in agent-only mode
+            const argValue = argumentInput.value.trim();
+            if (argValue) {
+              parts.push(`"${sanitizeArgument(argValue)}"`);
+            }
+          }
+
+          // Add thinking flags
+          const thinkValue = thinkingFlagSelect.value;
+          if (thinkValue) {
+            if (thinkValue === "think-hard") {
+              parts.push("--think-hard");
+            } else if (thinkValue === "ultrathink") {
+              parts.push("--ultrathink");
+            } else {
+              parts.push("--think");
+            }
+          }
+
+          // Collect all checkbox flags
+          const checkedFlags = [];
+          document.querySelectorAll('input[type="checkbox"]:checked').forEach((cb) => {
+            const flag = cb.value.replace(/^(mcp-|behavior-|exec-|bool-|adv-|sys-)/, "");
+            if (flag.startsWith("--")) {
+              checkedFlags.push(flag);
+            } else {
+              checkedFlags.push("--" + flag);
+            }
+          });
+
+          // Add select flags
+          const selectFlagElements = [
+            { select: depthFlagSelect, flag: "depth" },
+            { select: typeFlagSelect, flag: "type" },
+            { select: focusFlagSelect, flag: "focus" },
+            { select: strategyFlagSelect, flag: "strategy" },
+            { select: modeFlagSelect, flag: "mode" },
+            { select: formatFlagSelect, flag: "format" },
+            { select: scopeFlagSelect, flag: "scope" },
+            { select: levelFlagSelect, flag: "level" },
+            { select: unitFlagSelect, flag: "unit" },
+            { select: contextFlagSelect, flag: "context" },
+            { select: concurrencyFlagSelect, flag: "concurrency" },
+            { select: iterationsFlagSelect, flag: "iterations" },
+          ];
+
+          selectFlagElements.forEach(({ select, flag }) => {
+            const value = select.value;
+            if (value) {
+              parts.push(`--${flag}=${value}`);
+            }
+          });
+
+          // Add checkbox flags
+          parts.push(...checkedFlags);
+
+          return parts.join(" ");
+        }
+
+        /**
+         * Updates the command output display with proper escaping to prevent XSS.
+         */
+        function updateCommandOutput() {
+          const command = buildCommand();
+          // Use textContent instead of innerHTML to prevent XSS
+          commandOutput.textContent = "";
+          const span = document.createElement("span");
+          span.className = "command";
+          span.textContent = command;
+          commandOutput.appendChild(span);
+        }
+
+        /**
+         * Updates the argument input placeholder based on selected command and language.
+         */
+        function updateArgumentPlaceholder() {
+          const commandId = appState.commandType === "slash" ? slashCommandSelect.value : null;
+          const placeholderKey =
+            commandId && argumentPlaceholderKeys[commandId]
+              ? argumentPlaceholderKeys[commandId]
+              : argumentPlaceholderKeys["default"];
+          argumentInput.placeholder = t(placeholderKey);
+        }
+
+        // ============================================
+        // Dynamic Flag Filtering
+        // ============================================
+        /**
+         * Updates flag visibility based on the selected command.
+         * Shows only relevant flags and filters dropdown options.
+         */
+        function updateFlagVisibility() {
+          const commandId = appState.commandType === "slash" ? slashCommandSelect.value : null;
+          const flagConfig =
+            commandId && commandFlagsMapping[commandId]
+              ? commandFlagsMapping[commandId]
+              : { selectFlags: {}, booleanFlags: [] };
+
+          // Get configured select flags for this command
+          const configuredSelectFlags = Object.keys(flagConfig.selectFlags);
+          const configuredBooleanFlags = flagConfig.booleanFlags || [];
+
+          // Update select dropdown visibility and filter options
+          Object.entries(flagElements).forEach(([flagName, config]) => {
+            const formField = document.getElementById(config.selectId)?.closest(".form-field");
+            if (!formField) return;
+
+            if (configuredSelectFlags.includes(flagName)) {
+              // Show the field and filter options
+              formField.classList.remove("hidden");
+
+              // Filter options to only show relevant values for this command
+              const allowedValues = flagConfig.selectFlags[flagName] || [];
+              const selectElement = document.getElementById(config.selectId);
+
+              if (allowedValues.length > 0) {
+                // Build filtered options
+                const currentValue = selectElement.value;
+                const filteredOptions = [
+                  { value: "", labelKey: "none", tooltipKey: "tooltipNone" },
+                ];
+
+                config.options.forEach((opt) => {
+                  // Skip empty value since it's already added above
+                  if (opt.value !== "" && allowedValues.includes(opt.value)) {
+                    filteredOptions.push(opt);
+                  }
+                });
+
+                // Repopulate select with filtered options
+                populateSelect(selectElement, filteredOptions, currentValue);
+
+                // If current value is not in allowed values, reset to empty
+                if (currentValue && !allowedValues.includes(currentValue)) {
+                  selectElement.value = "";
+                }
+              }
+            } else {
+              // Hide the field and reset its value to prevent it from appearing in generated command
+              formField.classList.add("hidden");
+              const selectElement = document.getElementById(config.selectId);
+              if (selectElement) {
+                selectElement.value = "";
+              }
+            }
+          });
+
+          // Update boolean flags visibility in Command-Specific Flags section
+          const booleanFlagsContainer = document.getElementById("booleanFlags");
+          if (booleanFlagsContainer) {
+            Array.from(booleanFlagsContainer.children).forEach((child) => {
+              const checkbox = child.querySelector('input[type="checkbox"]');
+              if (checkbox) {
+                const flagName = checkbox.value.replace(/^bool-/, "");
+                if (configuredBooleanFlags.includes(flagName)) {
+                  child.classList.remove("hidden");
+                } else {
+                  child.classList.add("hidden");
+                  // Uncheck hidden flags
+                  checkbox.checked = false;
+                }
+              }
+            });
+          }
+
+          updateCommandOutput();
+        }
+
+        // ============================================
+        // Event Handlers
+        // ============================================
+        /**
+         * Sets up all event listeners for the application.
+         * Handles keyboard shortcuts, mouse events, and form interactions.
+         */
+        function setupEventListeners() {
+          // Keyboard shortcuts
+          document.addEventListener("keydown", (e) => {
+            // Ctrl+C / Cmd+C to copy command (when no text selected)
+            if ((e.ctrlKey || e.metaKey) && e.key === "c") {
+              const selection = window.getSelection();
+              if (!selection || selection.toString().length === 0) {
+                e.preventDefault();
+                copyCommandToClipboard();
+              }
+            }
+
+            // Ctrl+L / Cmd+L to toggle language
+            if ((e.ctrlKey || e.metaKey) && e.key === "l") {
+              e.preventDefault();
+              toggleLanguage();
+            }
+          });
+
+          // Middle mouse button to copy command
+          document.addEventListener("mousedown", (e) => {
+            if (e.button === 1) {
+              // Middle mouse button
+              e.preventDefault();
+              copyCommandToClipboard();
+            }
+          });
+
+          // Language switcher click
+          const langSwitcher = document.getElementById("langSwitcher");
+          if (langSwitcher) {
+            langSwitcher.addEventListener("click", (e) => {
+              if (e.target.classList.contains("lang-btn")) {
+                const lang = e.target.getAttribute("data-lang");
+                if (lang !== currentLang) {
+                  updateLanguage(lang);
+                }
+              }
+            });
+          }
+
+          // Command type toggle
+          commandTypeInputs.forEach((input) => {
+            input.addEventListener("change", (e) => {
+              appState.commandType = e.target.value;
+              if (e.target.value === "slash") {
+                slashCommandGroup.classList.remove("hidden");
+                // Agent is optional in slash mode, show it
+                agentGroup.classList.remove("hidden");
+                // Update label to show it's optional
+                const agentLabel = agentGroup.querySelector(".form-label");
+                if (agentLabel) {
+                  agentLabel.innerHTML = `${t("agent")} <span class="optional-hint">${t("optionalHint")}</span>`;
+                }
+              } else {
+                slashCommandGroup.classList.add("hidden");
+                agentGroup.classList.remove("hidden");
+                // Update label to show it's required
+                const agentLabel = agentGroup.querySelector(".form-label");
+                if (agentLabel) {
+                  agentLabel.innerHTML = t("agent");
+                }
+              }
+              updateFlagVisibility();
+              updateCommandOutput();
+              updateArgumentPlaceholder();
+            });
+          });
+
+          // Slash command change
+          slashCommandSelect.addEventListener("change", () => {
+            appState.selectedCommand = slashCommandSelect.value;
+            updateFlagVisibility();
+            updateCommandOutput();
+            updateArgumentPlaceholder();
+          });
+
+          // Agent select change
+          agentSelect.addEventListener("change", () => {
+            appState.selectedAgent = agentSelect.value;
+            updateFlagVisibility();
+            updateCommandOutput();
+          });
+
+          // Argument input with debouncing
+          let debounceTimer;
+          argumentInput.addEventListener("input", () => {
+            appState.argument = argumentInput.value;
+            // Clear previous timer
+            clearTimeout(debounceTimer);
+            // Debounce the update to avoid excessive re-renders
+            debounceTimer = setTimeout(() => {
+              updateCommandOutput();
+            }, 50);
+          });
+
+          // Flag selects
+          const allSelects = [
+            thinkingFlagSelect,
+            depthFlagSelect,
+            typeFlagSelect,
+            focusFlagSelect,
+            strategyFlagSelect,
+            modeFlagSelect,
+            formatFlagSelect,
+            scopeFlagSelect,
+            levelFlagSelect,
+            unitFlagSelect,
+            contextFlagSelect,
+            concurrencyFlagSelect,
+            iterationsFlagSelect,
+          ];
+
+          allSelects.forEach((select) => {
+            select.addEventListener("change", updateCommandOutput);
+          });
+
+          // Copy button
+          copyBtn.addEventListener("click", () => {
+            copyCommandToClipboard();
+          });
+        }
+
+        /**
+         * Shows the toast notification for successful actions.
+         * Automatically hides after 2 seconds.
+         */
+        function showToast() {
+          const toast = document.getElementById("toast");
+          toast.classList.add("visible");
+          setTimeout(() => {
+            toast.classList.remove("visible");
+          }, 2000);
+        }
+
+        // ============================================
+        // Command History Management
+        // ============================================
+        const MAX_HISTORY_ITEMS = 5;
+        let commandHistory = [];
+
+        /**
+         * Validates and sanitizes history data from localStorage.
+         * @param {*} data - The data to validate
+         * @returns {boolean} True if valid
+         */
+        function isValidHistoryData(data) {
+          if (!Array.isArray(data)) return false;
+          if (data.length > MAX_HISTORY_ITEMS + 10) return false; // Reasonable limit
+          return data.every((item) => typeof item === "string" && item.length < 10000);
+        }
+
+        /**
+         * Load history from localStorage with validation.
+         */
+        function loadCommandHistory() {
+          try {
+            const saved = localStorage.getItem("superclaudeCommandHistory");
+            if (saved) {
+              const parsed = JSON.parse(saved);
+              if (isValidHistoryData(parsed)) {
+                commandHistory = parsed;
+              } else {
+                console.warn("Invalid history data found, resetting");
+                commandHistory = [];
+                // Clear invalid data
+                localStorage.removeItem("superclaudeCommandHistory");
+              }
+            }
+          } catch (e) {
+            console.error("Error loading command history:", e);
+            commandHistory = [];
+          }
+          renderCommandHistory();
+        }
+
+        /**
+         * Save history to localStorage with error handling.
+         */
+        function saveCommandHistory() {
+          try {
+            const serialized = JSON.stringify(commandHistory);
+            // Check if size is reasonable (<50KB)
+            if (serialized.length > 50000) {
+              console.warn("History too large, trimming");
+              commandHistory = commandHistory.slice(0, MAX_HISTORY_ITEMS);
+            }
+            localStorage.setItem("superclaudeCommandHistory", JSON.stringify(commandHistory));
+          } catch (e) {
+            // Handle quota exceeded or other storage errors
+            if (e.name === "QuotaExceededError") {
+              console.warn("Storage quota exceeded, clearing history");
+              commandHistory = [];
+              try {
+                localStorage.removeItem("superclaudeCommandHistory");
+              } catch (e2) {
+                console.error("Failed to clear history:", e2);
+              }
+            } else {
+              console.error("Error saving command history:", e);
+            }
+          }
+        }
+
+        /**
+         * Adds a command to history, removing duplicates and maintaining max size.
+         * @param {string} command - The command to add to history
+         */
+        function addToHistory(command) {
+          if (!command || command.trim() === "") return;
+
+          // Remove duplicate if exists
+          const existingIndex = commandHistory.indexOf(command);
+          if (existingIndex !== -1) {
+            commandHistory.splice(existingIndex, 1);
+          }
+
+          // Add to beginning
+          commandHistory.unshift(command);
+
+          // Keep only last 5
+          if (commandHistory.length > MAX_HISTORY_ITEMS) {
+            commandHistory = commandHistory.slice(0, MAX_HISTORY_ITEMS);
+          }
+
+          saveCommandHistory();
+          renderCommandHistory();
+        }
+
+        /**
+         * Escapes HTML special characters to prevent XSS.
+         * @param {string} str - The string to escape
+         * @returns {string} The escaped string
+         */
+        function escapeHtml(str) {
+          const div = document.createElement("div");
+          div.textContent = str;
+          return div.innerHTML;
+        }
+
+        /**
+         * Escapes HTML attribute values.
+         * @param {string} str - The string to escape
+         * @returns {string} The escaped string
+         */
+        function escapeHtmlAttr(str) {
+          return str
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
+        /**
+         * Renders the command history list with proper escaping.
+         */
+        function renderCommandHistory() {
+          const historyList = document.getElementById("historyList");
+          if (!historyList) return;
+
+          if (commandHistory.length === 0) {
+            historyList.innerHTML = `<div class="history-empty" data-i18n="historyEmpty">${escapeHtml(t("historyEmpty"))}</div>`;
+            return;
+          }
+
+          historyList.innerHTML = commandHistory
+            .map(
+              (cmd, index) => `
+        <div class="history-item">
+          <span class="history-command" title="${escapeHtmlAttr(cmd)}">${escapeHtml(cmd)}</span>
+          <button class="history-copy-btn" data-index="${index}" title="${escapeHtmlAttr(t("copy"))}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        </div>
+      `,
+            )
+            .join("");
+
+          // Add click handlers for history copy buttons
+          historyList.querySelectorAll(".history-copy-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const index = parseInt(btn.getAttribute("data-index"));
+              const command = commandHistory[index];
+              if (command) {
+                copyToClipboardWithFallback(command);
+              }
+            });
+          });
+        }
+
+        /**
+         * Fallback method for copying to clipboard using deprecated execCommand.
+         * Used when modern Clipboard API fails.
+         * @param {string} text - The text to copy
+         * @returns {boolean} Success status
+         */
+        function fallbackCopyToClipboard(text) {
+          const textArea = document.createElement("textarea");
+          textArea.value = text;
+          textArea.style.position = "fixed";
+          textArea.style.left = "-999999px";
+          textArea.style.top = "-999999px";
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+
+          try {
+            const successful = document.execCommand("copy");
+            document.body.removeChild(textArea);
+            return successful;
+          } catch (err) {
+            document.body.removeChild(textArea);
+            console.error("Fallback copy failed:", err);
+            return false;
+          }
+        }
+
+        /**
+         * Copies text to clipboard with error handling and fallback.
+         * @param {string} text - The text to copy
+         * @returns {Promise<boolean>} Success status
+         */
+        async function copyToClipboardWithFallback(text) {
+          if (!navigator.clipboard) {
+            // Clipboard API not available, use fallback
+            const success = fallbackCopyToClipboard(text);
+            if (success) {
+              showToast();
+            }
+            return success;
+          }
+
+          try {
+            await navigator.clipboard.writeText(text);
+            showToast();
+            return true;
+          } catch (err) {
+            console.error("Clipboard API failed, trying fallback:", err);
+            const success = fallbackCopyToClipboard(text);
+            if (success) {
+              showToast();
+            } else {
+              // Could show an error toast here
+              console.warn("Copy failed completely");
+            }
+            return success;
+          }
+        }
+
+        /**
+         * Copies the generated command to clipboard and adds to history.
+         */
+        function copyCommandToClipboard() {
+          const command = buildCommand();
+          copyToClipboardWithFallback(command).then((success) => {
+            if (success) {
+              addToHistory(command);
+            }
+          });
+        }
+
+        // ============================================
+        // Initialize Application
+        // ============================================
+        document.addEventListener("DOMContentLoaded", () => {
+          initializeSlashCommands();
+          initializeAgents();
+          initializeFlagSelects();
+          initializeCheckboxGroups();
+          setupEventListeners();
+          updateFlagVisibility(); // Apply initial flag filtering based on selected command
+          updateCommandOutput();
+          updateArgumentPlaceholder();
+          loadCommandHistory(); // Load command history from localStorage
+        });
+      })();
+    </script>
+
+    <!-- Layered mountain silhouettes at bottom -->
+    <svg
+      class="bottom-pattern"
+      viewBox="0 0 1920 200"
+      preserveAspectRatio="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <!-- Back layer - distant mountains -->
+      <path
+        class="mountain-layer-1"
+        d="M0,200 L0,140 L120,100 L240,130 L360,80 L480,120 L600,70 L720,110 L840,60 L960,90 L1080,50 L1200,85 L1320,65 L1440,100 L1560,55 L1680,95 L1800,75 L1920,110 L1920,200 Z"
+        fill="rgba(217,119,87,0.03)"
+      />
+
+      <!-- Middle-back layer -->
+      <path
+        class="mountain-layer-2"
+        d="M0,200 L0,160 L100,130 L200,150 L320,110 L440,140 L540,95 L660,130 L780,100 L900,135 L1020,90 L1140,125 L1260,105 L1380,140 L1500,100 L1620,130 L1740,110 L1860,145 L1920,125 L1920,200 Z"
+        fill="rgba(217,119,87,0.05)"
+      />
+
+      <!-- Middle layer -->
+      <path
+        class="mountain-layer-3"
+        d="M0,200 L0,170 L80,145 L180,165 L280,130 L400,155 L500,120 L620,150 L740,125 L860,155 L980,115 L1100,145 L1220,130 L1340,160 L1460,125 L1580,150 L1700,135 L1820,160 L1920,140 L1920,200 Z"
+        fill="rgba(217,119,87,0.07)"
+      />
+
+      <!-- Middle-front layer -->
+      <path
+        class="mountain-layer-4"
+        d="M0,200 L0,175 L60,155 L160,170 L260,145 L380,165 L480,140 L600,165 L720,150 L840,170 L960,140 L1080,165 L1200,150 L1320,175 L1440,145 L1560,165 L1680,155 L1800,175 L1920,160 L1920,200 Z"
+        fill="rgba(217,119,87,0.09)"
+      />
+
+      <!-- Front layer - closest mountains -->
+      <path
+        class="mountain-layer-5"
+        d="M0,200 L0,185 L40,170 L140,185 L240,165 L360,180 L460,160 L580,180 L700,170 L820,185 L940,165 L1060,180 L1180,170 L1300,188 L1420,168 L1540,182 L1660,172 L1780,188 L1920,175 L1920,200 Z"
+        fill="rgba(217,119,87,0.12)"
+      />
+    </svg>
+  </body>
+</html>
