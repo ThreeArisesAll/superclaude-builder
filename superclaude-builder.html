@@ -1831,8 +1831,8 @@
           },
         };
 
-        // Current language state
-        let currentLang = "en";
+        // Current language state (restore from localStorage or default to "en")
+        let currentLang = localStorage.getItem("builder-lang") || "en";
 
         // Translation function
         function t(key) {
@@ -1848,6 +1848,7 @@
         // Update all translatable elements
         function updateLanguage(lang) {
           currentLang = lang;
+          localStorage.setItem("builder-lang", lang);
           document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
 
           // Update all elements with data-i18n attribute
@@ -3495,6 +3496,7 @@
         // Initialize Application
         // ============================================
         document.addEventListener("DOMContentLoaded", () => {
+          updateLanguage(currentLang); // Apply saved language on load
           initializeSlashCommands();
           initializeAgents();
           initializeFlagSelects();
