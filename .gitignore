@@ -20,7 +20,6 @@
 
 **/.idea/
 **/.github/
-**/.vscode/
 
 **/*.iml
 **/*.ipr
@@ -75,7 +74,5 @@
 
 **/AGENTS.md
 **/.agent/
-
-**/.serena/
 
 **/.archived/
