@@ -60,19 +60,23 @@
 **/.cache/
 **/*cache*.json
 
-**/*.{bak,backup,old,save,orig,previous}
+**/*.bak*
+**/*.backup
+**/*.old
+**/*.save
+**/*.orig
+**/*.previous
+**/*.lock
 **/backup*/
 **/archive*/
 
 **/.devcontainer/
 **/requirements*.txt
 
-**/.specstory/
-**/.history/
+**/codes/
 
-/*.bat
-
-**/AGENTS.md
-**/.agent/
+**/*.bat
 
 **/.archived/
+
+**/.claude
